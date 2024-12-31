@@ -33,7 +33,7 @@ sol_per_pop = 10
 select_rate = 0.3
 num_parents_mating = int(sol_per_pop * select_rate)
 
-num_genes = 5  # number of wind turbines
+# num_genes = 5  # number of wind turbines
 # an array can be used in gene_space to manually set all available positions for a turbine
 gene_space = list(range(rows * cols))
 restriction = False # whether there are unavailable cells

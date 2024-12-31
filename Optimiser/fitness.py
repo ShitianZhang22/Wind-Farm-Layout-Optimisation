@@ -28,24 +28,25 @@ for i in range(len(theta)):
 
 
 def fitness_func(ga_instance, solution, solution_idx):
+    num_genes = ga_instance.num_genes
     fitness = 0  # a specific layout power accumulate
     for ind_t in range(len(theta)):
         # need an extra transpose. the indices will auto trans once
         trans_xy_position = trans_xy[ind_t, :, solution].transpose()
 
-        speed_deficiency = wake(trans_xy_position)
+        speed_deficiency = wake(trans_xy_position, num_genes)
 
         actual_velocity = (1 - speed_deficiency) * velocity[ind_t]
-        lp_power = layout_power(actual_velocity)  # total power of a specific layout specific wind speed specific theta
+        lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
         fitness += lp_power.sum() * f_theta_v[ind_t]
     return fitness
 
 
-def wake(trans_xy_position):
+def wake(trans_xy_position, n):
     # y value increasingly sort
     sorted_index = np.argsort(trans_xy_position[1, :])
-    wake_deficiency = np.zeros(num_genes, dtype=np.float32)
-    for j in range(num_genes):
+    wake_deficiency = np.zeros(n, dtype=np.float32)
+    for j in range(n):
         for k in range(j):
             dx = np.absolute(trans_xy_position[0, sorted_index[j]] - trans_xy_position[0, sorted_index[k]])
             dy = np.absolute(trans_xy_position[1, sorted_index[j]] - trans_xy_position[1, sorted_index[k]])
@@ -67,9 +68,9 @@ def cal_deficiency(dx, dy):
     return 2.0 / 3.0 * intersection / (np.pi * r_wake ** 2)
 
 
-def layout_power(v):
-    power = np.zeros(num_genes, dtype=np.float32)
-    for j in range(num_genes):
+def layout_power(v, n):
+    power = np.zeros(n, dtype=np.float32)
+    for j in range(n):
         if 2.0 <= v[j] < 18:
             if v[j] < 12.8:
                 power[j] = 0.3 * v[j] ** 3

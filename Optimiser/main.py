@@ -29,12 +29,13 @@ def on_start(ga):
 def on_generation(ga):
     print("Generation", ga.generations_completed)
 
-def optimisation():
+def optimisation(wt_number):
+    print('Number of genes:{}'.format(wt_number))
     ga_instance = pygad.GA(num_generations=num_generations,
                            num_parents_mating=num_parents_mating,
                            fitness_func=fitness_func,
                            sol_per_pop=sol_per_pop,
-                           num_genes=num_genes,
+                           num_genes=wt_number,
                            gene_type=int,
                            init_range_low=0,
                            init_range_high=init_range_high,
@@ -55,6 +56,7 @@ def optimisation():
                            parallel_processing=parallel_processing,
                            random_seed=random_seed,
                            )
+    ga_instance.run()
     solution, solution_fitness, solution_idx = ga_instance.best_solution()
     print("Parameters of the best solution :\n {solution}".format(solution=solution))
     print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
@@ -63,5 +65,5 @@ def optimisation():
     return solution
 
 if __name__ == '__main__':
-    optimisation()
+    optimisation(1)
     # cProfile.run('ga_instance.run()')
