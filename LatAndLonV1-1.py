@@ -16,39 +16,52 @@ st.markdown('# Wind Farm Layout Optimisation')
 # Default map position (Whitelee Wind Farm)
 default = {
     'centre': [55.674099775230026, -4.271278381347657],
-    'zoom': 12
+    'zoom': 12,
+    'site': [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
 }
+
 
 def initialise_session_state():
     """
     This function is to initialise st.session_state based on default settings.
     :return:
     """
+    # Initialise session state for wind turbine locations
+    if 'wt_pos' not in st.session_state:
+        st.session_state['wt_pos'] = []
+    # Initialise the wind farm site boundaries
+    if 'site' not in st.session_state:
+        st.session_state['site'] = default['site']
+    # Initialise map position
+    if 'centre' not in st.session_state:
+        st.session_state['centre'] = default['centre']
+    if 'zoom' not in st.session_state:
+        st.session_state['zoom'] = default['zoom']
+
+
+def reset_session_state():
+    """
+    This function is to force resetting st.session_state.
+    :return:
+    """
     # Reset session state for wind turbine locations
     st.session_state['wt_pos'] = []
     # Reset the wind farm site boundaries
-    st.session_state['site'] = [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
+    st.session_state['site'] = default['site']
     # Reset the map range
     st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
+
 
 def initialise_map(centre, zoom):
     _m = folium.Map(location=centre, zoom_start=zoom)
     return _m
 
+
 # Initialisation
 initialise_session_state()
 m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 MousePosition().add_to(m)
-
-col1, col2 = st.columns(2)
-
-# Initialise session state for wind turbine locations
-if 'wt_pos' not in st.session_state:
-    st.session_state['wt_pos'] = []
-# Initialise the wind farm site boundaries
-if 'site' not in st.session_state:
-    st.session_state['site'] = [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
 
 # Enable export without the edit parameter
 # Draw(export=True).add_to(m)
@@ -63,7 +76,8 @@ with st.form('config'):
 
 # on clicking the submit button
 if submit:
-    initialise_session_state()
+    reset_session_state()
+    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
     solution = optimisation(st.session_state['wt_number'])
     solution = gene_to_pos(solution)
