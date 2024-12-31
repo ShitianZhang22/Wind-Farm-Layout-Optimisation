@@ -2,7 +2,7 @@
 This is the fitness function which reads the data from pre_computation.
 """
 
-from config import *
+from Optimiser.config import *
 
 '''
 Initialisation

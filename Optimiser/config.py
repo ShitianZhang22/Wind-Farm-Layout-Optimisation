@@ -63,8 +63,8 @@ mutation_by_replacement = True
 
 stop_criteria = None
 
-# parallel_processing = None
-parallel_processing = ['process', 10]
+parallel_processing = None
+# parallel_processing = ['process', 10]
 
 random_seed = 0
 

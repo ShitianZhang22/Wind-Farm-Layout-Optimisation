@@ -13,9 +13,9 @@ pre_computation.py
 """
 
 import pygad
-from config import *
-# from fitness_pre import fitness_func
-from fitness import fitness_func
+from Optimiser.config import *
+# from Optimiser.fitness_pre import fitness_func
+from Optimiser.fitness import fitness_func
 import time
 import cProfile
 

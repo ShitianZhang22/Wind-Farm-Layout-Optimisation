@@ -2,7 +2,7 @@
 This is the fitness function.
 """
 
-from config import *
+from Optimiser.config import *
 
 '''
 xy position initialisation

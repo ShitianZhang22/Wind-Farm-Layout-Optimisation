@@ -2,24 +2,38 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 from folium.plugins import Draw
+from Optimiser.optimiser import optimisation
+from Transfer import *
+
+st.markdown('#Wind Farm Layout Optimisation')
 
 # Create a map
 # Set initial position
 # m = folium.Map(location=[51.5, -0.1], zoom_start=10)  # This is London
 m = folium.Map(location=[55.71, -4.34], zoom_start=50)  # This is London
+fg = folium.FeatureGroup(name='Wind Turbines')
 
 # Enable export without the edit parameter
-draw = Draw(export=True) 
+draw = Draw(export=True)
 draw.add_to(m)
 
+a = folium.Marker([55.71, -4.34], icon = folium.Icon(icon='info',prefix= 'fa',icon_color='white'))
+fg.add_child(a)
+
 # Show map
-draw_result = st_folium(m, width=700, height=500, key="map1")
+draw_result = st_folium(m, feature_group_to_add=fg, width=700, height=500, key="map1")
 
 # Add an input box
 st.number_input('Please enter the number of wind turbines:', min_value=1, step=1, key='wt')
 
 if st.button("Submit"):
     st.write('wind turbine number:{}'.format(st.session_state['wt']))
+
+    # solution = optimisation()
+    # solution = gene_to_pos(solution)
+    solution = gene_to_pos(None)
+    a = folium.Marker([55.71, -4.34], popup="Liberty Bell", tooltip="Liberty Bell")
+    fg.add_child(a)
 
     # The following part is for site selection, and is closed at the moment.
     # if draw_result:
