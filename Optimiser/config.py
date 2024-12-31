@@ -66,7 +66,8 @@ stop_criteria = None
 parallel_processing = None
 # parallel_processing = ['process', 10]
 
-random_seed = 0
+random_seed = None
+# random_seed = 0
 
 '''
 data folder

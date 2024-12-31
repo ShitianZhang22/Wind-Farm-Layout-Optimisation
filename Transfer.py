@@ -27,6 +27,7 @@ def gene_to_pos(gene=None):
     col_range = long_max - long_min
     pos[:, 0] = pos[:, 0] * row_range / rows + lat_min
     pos[:, 1] = pos[:, 1] * col_range / cols + long_min
+    pos = pos.tolist()
     return pos
 
 

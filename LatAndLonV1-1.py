@@ -5,35 +5,37 @@ from folium.plugins import Draw
 from Optimiser.optimiser import optimisation
 from Transfer import *
 
-st.markdown('#Wind Farm Layout Optimisation')
+st.markdown('# Wind Farm Layout Optimisation')
 
 # Create a map
 # Set initial position
 # m = folium.Map(location=[51.5, -0.1], zoom_start=10)  # This is London
-m = folium.Map(location=[55.71, -4.34], zoom_start=50)  # This is London
-fg = folium.FeatureGroup(name='Wind Turbines')
+m = folium.Map(location=[55.674099775230026, -4.271278381347657], zoom_start=12)  # This is Whitelee wind farm
+
+# Initialise session state for wind turbine locations
+if 'wt_pos' not in st.session_state:
+    st.session_state['wt_pos'] = []
+# Initialise the wind farm site boundaries
+if 'site' not in st.session_state:
+    st.session_state['site'] = [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
 
 # Enable export without the edit parameter
-draw = Draw(export=True)
-draw.add_to(m)
+# Draw(export=True).add_to(m)
 
-a = folium.Marker([55.71, -4.34], icon = folium.Icon(icon='info',prefix= 'fa',icon_color='white'))
-fg.add_child(a)
-
-# Show map
-draw_result = st_folium(m, feature_group_to_add=fg, width=700, height=500, key="map1")
-
-# Add an input box
-st.number_input('Please enter the number of wind turbines:', min_value=1, step=1, key='wt')
-
+# on clicking the submit button
 if st.button("Submit"):
     st.write('wind turbine number:{}'.format(st.session_state['wt']))
 
-    # solution = optimisation()
-    # solution = gene_to_pos(solution)
-    solution = gene_to_pos(None)
-    a = folium.Marker([55.71, -4.34], popup="Liberty Bell", tooltip="Liberty Bell")
-    fg.add_child(a)
+    solution = optimisation()
+    solution = gene_to_pos(solution)
+    # solution = gene_to_pos(None)
+    st.session_state['wt_pos'] = solution
+
+    # for i in range(solution.shape[0]):
+    #     print(solution[i])
+    #     st.session_state['wind turbines'].append(
+    #         folium.Marker(solution[i], icon=folium.Icon(icon='info', prefix='fa', icon_color='white'))
+    #     )
 
     # The following part is for site selection, and is closed at the moment.
     # if draw_result:
@@ -70,3 +72,15 @@ if st.button("Submit"):
     # else:
     #     st.write("Please box an area first!")
 
+# Add an input box
+st.number_input('Please enter the number of wind turbines:', min_value=1, step=1, key='wt')
+
+fg = folium.FeatureGroup(name='Wind_Turbines')
+for pos in st.session_state['wt_pos']:
+    fg.add_child(folium.Marker(pos))
+fg.add_child(folium.Rectangle(st.session_state['site']))
+
+
+# Show map
+st_folium(m, feature_group_to_add=fg, width=700, height=500, key="map1")
+st.write(st.session_state)
