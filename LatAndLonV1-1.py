@@ -1,29 +1,48 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-from folium.plugins import Draw
+from folium.plugins import MousePosition
 
 import Optimiser.config
 from Optimiser.main import optimisation
 from Transfer import *
 
-def reset():
-    # Reset session state for wind turbine locations
-    st.session_state['wt_pos'] = []
-    # Reset the wind farm site boundaries
-    st.session_state['site'] = [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
-
+# Page configuration
 st.set_page_config(
     page_title="Wind Farm Layout Optimisation",
     layout="wide"
 )
-
 st.markdown('# Wind Farm Layout Optimisation')
 
+# Default map position (Whitelee Wind Farm)
+default = {
+    'centre': [55.674099775230026, -4.271278381347657],
+    'zoom': 12
+}
 
-# Create a map
-# Set initial map position
-m = folium.Map(location=[55.674099775230026, -4.271278381347657], zoom_start=12)  # This is Whitelee wind farm
+def initialise_session_state():
+    """
+    This function is to initialise st.session_state based on default settings.
+    :return:
+    """
+    # Reset session state for wind turbine locations
+    st.session_state['wt_pos'] = []
+    # Reset the wind farm site boundaries
+    st.session_state['site'] = [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
+    # Reset the map range
+    st.session_state['centre'] = default['centre']
+    st.session_state['zoom'] = default['zoom']
+
+def initialise_map(centre, zoom):
+    _m = folium.Map(location=centre, zoom_start=zoom)
+    return _m
+
+# Initialisation
+initialise_session_state()
+m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+MousePosition().add_to(m)
+
+col1, col2 = st.columns(2)
 
 # Initialise session state for wind turbine locations
 if 'wt_pos' not in st.session_state:
@@ -35,13 +54,12 @@ if 'site' not in st.session_state:
 # Enable export without the edit parameter
 # Draw(export=True).add_to(m)
 
-# Add an input box
-st.markdown('#### Please enter the number of wind turbines:')
+# Add a form for input
 st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
 
 # on clicking the submit button
 if st.button("Submit"):
-    # st.write('wind turbine number:{}'.format(st.session_state['wt_number']))
+    initialise_session_state()
 
     solution = optimisation(st.session_state['wt_number'])
     solution = gene_to_pos(solution)
@@ -82,8 +100,9 @@ if st.button("Submit"):
     # else:
     #     st.write("Please box an area first!")
 
-if st.button('Reset'):
-    reset()
+if st.button('Clear'):
+    initialise_session_state()
+    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
 fg = folium.FeatureGroup(name='Wind_Turbines')
 for pos in st.session_state['wt_pos']:
@@ -94,4 +113,4 @@ fg.add_child(folium.Rectangle(st.session_state['site']))
 # Show map
 st_folium(m, feature_group_to_add=fg, width=900, height=500, key="map1")
 # Show data
-st.write(st.session_state)
+# st.write(st.session_state)
