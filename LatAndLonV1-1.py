@@ -2,7 +2,7 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 from folium.plugins import Draw
-from Optimiser.optimiser import optimisation
+from Optimiser.main import optimisation
 from Transfer import *
 
 st.markdown('# Wind Farm Layout Optimisation')
