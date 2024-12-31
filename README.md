@@ -1,3 +1,4 @@
 # Wind-Farm-Layout-Optimisation
 
-Enter "streamlit run LatAndLonV1-1.py" in terminal to build the website.
+For local test, enter "streamlit run User_Interface.py" in terminal to run the server on localhost.\
+For online preview, please go to https://wind-farm-layout-optimisation.streamlit.app/
