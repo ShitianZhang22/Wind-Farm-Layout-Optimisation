@@ -3,7 +3,6 @@ import folium
 from streamlit_folium import st_folium
 from folium.plugins import MousePosition
 
-import Optimiser.config
 from Optimiser.main import optimisation
 from Transfer import *
 
@@ -55,10 +54,15 @@ if 'site' not in st.session_state:
 # Draw(export=True).add_to(m)
 
 # Add a form for input
-st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
+with st.form('config'):
+    st.markdown('### Optimisation Configurations')
+    st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
+    st.selectbox('Wind Data:', ['aaa', 'bbb'], key='wind_data')
+    st.selectbox('Geographical Data for Infeasible Areas:', ['aaa', 'bbb', 'None'], key='geo_data')
+    submit = st.form_submit_button('Submit')
 
 # on clicking the submit button
-if st.button("Submit"):
+if submit:
     initialise_session_state()
 
     solution = optimisation(st.session_state['wt_number'])
@@ -100,7 +104,7 @@ if st.button("Submit"):
     # else:
     #     st.write("Please box an area first!")
 
-if st.button('Clear'):
+if st.button('Clear All'):
     initialise_session_state()
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
