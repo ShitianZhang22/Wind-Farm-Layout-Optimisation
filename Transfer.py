@@ -1,3 +1,7 @@
+"""
+This file includes functions for data format transfer between the user interface and optimiser.
+"""
+
 import numpy as np
 
 def gene_to_pos(gene=None):
