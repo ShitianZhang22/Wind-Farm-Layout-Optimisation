@@ -119,7 +119,7 @@ if submit:
     #     st.write("Please box an area first!")
 
 if st.button('Clear All'):
-    initialise_session_state()
+    reset_session_state()
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
 fg = folium.FeatureGroup(name='Wind_Turbines')
