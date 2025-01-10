@@ -1,7 +1,8 @@
 import streamlit as st
 import folium
-from streamlit_folium import st_folium
 from folium.plugins import MousePosition
+from streamlit_folium import st_folium
+import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
 from Transfer import *
@@ -70,8 +71,6 @@ MousePosition().add_to(m)
 with st.form('config'):
     st.markdown('### Optimisation Configurations')
     st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
-    st.selectbox('Wind Data:', ['aaa', 'bbb'], key='wind_data')
-    st.selectbox('Geographical Data for Infeasible Areas:', ['aaa', 'bbb', 'None'], key='geo_data')
     submit = st.form_submit_button('Submit')
 
 # on clicking the submit button
