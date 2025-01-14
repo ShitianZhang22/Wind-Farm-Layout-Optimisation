@@ -4,4 +4,5 @@ Optimiser/test.py
 Optimiser/__pycache__/
 __pycache__/
 data/wind/raw/
+data/land/raw/
 trial.py
