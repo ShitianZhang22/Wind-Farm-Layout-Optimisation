@@ -18,7 +18,7 @@ def getclosest(pos_list, _lat, _lon):
     return pos_list[dist_sq.argmin()]
 
 
-file = netCDF4.Dataset('test/2024dec.nc', 'r')
+file = netCDF4.Dataset('raw/2024dec.nc', 'r')
 
 # print(file.variables.keys())
 # for d in file.dimensions.items():
