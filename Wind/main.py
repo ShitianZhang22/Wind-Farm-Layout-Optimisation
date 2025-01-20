@@ -26,7 +26,7 @@ def wind(area, save_dir, test=False):
     # get the centre of the site
     lat, lon = (area[0] + area[2]) / 2, (area[1] + area[3]) / 2
     if test: 
-        raw_wind = process_wind('data/wind/backup/temp.nc', lat, lon)
+        raw_wind = process_wind('Wind/backup/temp.nc', lat, lon)
     else:
         get_wind(area, save_dir)
         raw_wind = process_wind(save_dir, lat, lon)
