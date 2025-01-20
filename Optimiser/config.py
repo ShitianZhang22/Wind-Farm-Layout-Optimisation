@@ -4,7 +4,7 @@ This is the configuration file and contains most of the hyperparameters.
 
 import os
 import numpy as np
-from data.wind.main import wind
+from Wind.main import wind
 
 '''
 wind speed data

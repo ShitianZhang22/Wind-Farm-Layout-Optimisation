@@ -5,5 +5,5 @@ Optimiser/__pycache__/
 __pycache__/
 data/land/raw/
 trial.py
-data/wind/backup/2024Dec.nc
-data/wind/backup/2024Nov.nc
+Wind/backup/2024Dec.nc
+Wind/backup/2024Nov.nc

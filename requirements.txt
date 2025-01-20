@@ -1,6 +1,7 @@
 folium
 streamlit_folium
 pygad
-Optimiser
-data
 cdsapi
+netCDF4
+Optimiser
+Wind

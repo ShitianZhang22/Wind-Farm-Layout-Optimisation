@@ -8,9 +8,9 @@ Input: a list of site bounds, and a path for caching data.
 Return: an (8, ) ndarray of the average wind speed at 8 directions
 """
 
-from data.wind.get_wind import get_wind
-from data.wind.process_wind import process_wind
-from data.wind.accumulate import accumulate
+from Wind.get_wind import get_wind
+from Wind.process_wind import process_wind
+from Wind.accumulate import accumulate
 import os
 
 
