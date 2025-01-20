@@ -1,6 +1,6 @@
 """
 This file is for downloading wind data from ERA5-land.
-Input: a list of Northern, Western, Southern, Eastern bounds of the site.
+Input: a list of site bounds, and a path for caching data.
 Return: No return
 The downloaded data will be stored in data/wind/raw/temp.nc
 """
@@ -8,7 +8,14 @@ The downloaded data will be stored in data/wind/raw/temp.nc
 import cdsapi
 
 
-def get_wind(area):
+def get_wind(area, save_dir):
+    """
+    This file is for downloading wind data from ERA5-land.
+    `area`: a list of Northern, Western, Southern, Eastern bounds of the site.
+    `save_dir`: the directory to temporarily save the downloaded data.
+    Return: No return
+    The downloaded data will be stored in data/wind/raw/temp.nc
+    """
     dataset = "reanalysis-era5-land"
     month = '12'
     all_day = ["01", "02", "03",
@@ -46,11 +53,11 @@ def get_wind(area):
         "area": area
     }
 
-    save_dir = 'raw/temp.nc'
     client = cdsapi.Client()
     client.retrieve(dataset, request, save_dir)
 
 
 if __name__ == '__main__':
     test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
-    get_wind(test_area)
+    dir = 'raw/temp.nc'
+    get_wind(test_area, dir)
