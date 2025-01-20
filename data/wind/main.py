@@ -8,9 +8,9 @@ Input: a list of site bounds, and a path for caching data.
 Return: an (8, ) ndarray of the average wind speed at 8 directions
 """
 
-from get_wind import get_wind
-from process_wind import process_wind
-from accumulate import accumulate
+from data.wind.get_wind import get_wind
+from data.wind.process_wind import process_wind
+from data.wind.accumulate import accumulate
 import os
 
 
@@ -26,7 +26,7 @@ def wind(area, save_dir, test=False):
     # get the centre of the site
     lat, lon = (area[0] + area[2]) / 2, (area[1] + area[3]) / 2
     if test: 
-        raw_wind = process_wind('backup/temp.nc', lat, lon)
+        raw_wind = process_wind('data/wind/backup/temp.nc', lat, lon)
     else:
         get_wind(area, save_dir)
         raw_wind = process_wind(save_dir, lat, lon)
