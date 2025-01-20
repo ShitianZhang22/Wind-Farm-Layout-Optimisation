@@ -11,11 +11,14 @@ wind speed data
 '''
 test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
 dir = 'Wind/raw/temp.nc'
+y = ['2024']
+m = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+# m = ['11', '12']
 
 # For speed, the wind data download is disabled, but it can normally work.
 # If the wind data needs to be downloaded, the website will be rendered after the data is ready.
-# velocity = wind(test_area, dir)
-velocity = wind(test_area, dir, True)
+# velocity = wind(test_area, dir, y, m)
+velocity = wind(test_area, dir, y, m, True)
 
 '''
 wind farm data

@@ -8,16 +8,20 @@ The downloaded data will be stored in Wind/raw/temp.nc
 import cdsapi
 
 
-def get_wind(area, save_dir):
+def get_wind(area, save_dir, year, month):
     """
     This file is for downloading wind data from ERA5-land.
     `area`: a list of Northern, Western, Southern, Eastern bounds of the site.
-    `save_dir`: the directory to temporarily save the downloaded data.
+    `save_dir`: a string of the directory to temporarily save the downloaded data.
+    `year`: a string or integer of the year (only one at a time)
+    `month`: a string or integer of the month (only one at a time)
     Return: No return
     The downloaded data will be stored in Wind/raw/temp.nc
     """
+    year = str(year)
+    month = str(month)
+
     dataset = "reanalysis-era5-land"
-    month = '12'
     all_day = ["01", "02", "03",
             "04", "05", "06",
             "07", "08", "09",
@@ -60,4 +64,4 @@ def get_wind(area, save_dir):
 if __name__ == '__main__':
     test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
     dir = 'raw/temp.nc'
-    get_wind(test_area, dir)
+    get_wind(test_area, dir, '2024', '12')

@@ -5,36 +5,44 @@ This is the master structure managing the process of wind data, including:
 3. Converting the data to annual wind distribution
 
 Input: a list of site bounds, and a path for caching data.
-Return: an (8, ) ndarray of the average wind speed at 8 directions
+Return: an (8, 2) ndarray of the average wind speed and frequency at 8 directions
 """
 
 from Wind.get_wind import get_wind
 from Wind.process_wind import process_wind
 from Wind.accumulate import accumulate
 import os
+import numpy as np
 
 
-def wind(area, save_dir, test=False):
+def wind(area, save_dir, years, months, test=False):
     """
     This is the master structure managing the process of wind data.
 
     `area`: a list of Northern, Western, Southern, Eastern bounds of the site.
     `save_dir`: the directory to temporarily save the downloaded data.
+    `years`: a list of strings including the years
+    `months`: a list of strings including the months
     `*test`: a bool for triggering test mode, where the data downloading process is skipped.
-    Return: an (8, ) ndarray of the average wind speed at 8 directions
+    Return: an (8, 2) ndarray of the average wind speed and frequency at 8 directions
     """
     # get the centre of the site
     lat, lon = (area[0] + area[2]) / 2, (area[1] + area[3]) / 2
     if test: 
         raw_wind = process_wind('Wind/backup/temp.nc', lat, lon)
     else:
-        get_wind(area, save_dir)
-        raw_wind = process_wind(save_dir, lat, lon)
-        os.remove(save_dir)
+        raw_wind = np.zeros((0, 2), dtype='float64')
+        for i in range(len(years)):
+            for j in range(len(months)):
+                get_wind(area, save_dir, years[i], months[j])
+                raw_wind = np.concatenate((raw_wind, process_wind(save_dir, lat, lon)), axis=0)
+                os.remove(save_dir)
     return accumulate(raw_wind)
 
 if __name__ == '__main__':
     test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
     dir = 'raw/temp.nc'
-    print(wind(test_area, dir, True))
+    y = ['2024']
+    m = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+    print(wind(test_area, dir, y, m, True))
 
