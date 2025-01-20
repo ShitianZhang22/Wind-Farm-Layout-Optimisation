@@ -10,7 +10,7 @@ from Wind.main import wind
 wind speed data
 '''
 test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
-dir = 'data/wind/raw/temp.nc'
+dir = 'Wind/raw/temp.nc'
 
 # For speed, the wind data download is disabled, but it can normally work.
 # If the wind data needs to be downloaded, the website will be rendered after the data is ready.
