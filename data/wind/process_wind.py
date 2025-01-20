@@ -1,47 +1,89 @@
+"""
+This file is for getting the historical wind data at a given location.
+Input: the directory path of the wind data downloaded
+Return: 
+"""
+
 import netCDF4
 import numpy as np
 
 
-def getclosest(pos_list, _lat, _lon):
+def getclosest(pos_list, _lat_, _lon_):
     """
     This function is to find the closest valid position from the selected point
-    `poslist`: an ndarray including coordinates (lat or lon) with valid data
+    `poslist`: an n*2 ndarray including coordinates (lat or lon) with valid data
     `_lat`: a float number indicating the latitude target
     `_lon`: a float number indicating the longitude target
     return: the closest valid position
     """
     # find squared distance of every point on grid
-    dist_sq = np.sum((pos_list - np.array([_lat * 10, _lon * 10])) ** 2, 1)
-    print(dist_sq.shape)
+    dist_sq = np.sum((pos_list - np.array([_lat_, _lon_])) ** 2, 1)
+    print(dist_sq.argmin())
+    
+    return dist_sq.argmin()
 
-    # 1D index of minimum dist_sq element
-    return pos_list[dist_sq.argmin()]
 
+def process_wind(source, _lat, _lon):
+    """
+    This function is for getting the historical wind data at a given location.
+    `source`: a string indicating the directory of the data
+    `_lat`: a float number indicating the latitude target
+    `_lon`: a float number indicating the longitude target
+    return: the closest valid position
+    """
 
-file = netCDF4.Dataset('raw/2024Dec.nc', 'r')
+    file = netCDF4.Dataset(source, 'r')
 
-# print(file.variables.keys())
-# for d in file.dimensions.items():
-#     print(d)
+    # print(file.variables.keys())
+    # for d in file.dimensions.items():
+    #     print(d)
 
-u = file.variables['u10']
-v = file.variables['v10']
-n = file.variables['number']
-lat = file.variables['latitude']
-lon = file.variables['longitude']
-t = file.variables['valid_time']
+    u = file.variables['u10']
+    v = file.variables['v10']
+    n = file.variables['number']
+    lat = file.variables['latitude']
+    lon = file.variables['longitude']
+    t = file.variables['valid_time']
 
-in_lat = 55.63
-in_lon = -4.3 + 360
+    # print(u[0])
+    # print(u[:].shape)
+    # print(lat[:])
+    # print(lon[:])
+    # print(u[0].data)
+    # print(type(u[:].data))
+    
+    '''
+    There is a problem with the mask. If there is no masked area in the requested region,
+    the downloaded data will not have a element-wise mask, but only a single False.
+    This will make the following np.argwhere return [].
+    '''
+    valid_ind = np.argwhere(u[0].mask == False)
+    if valid_ind.shape[1] == 0:
+        valid_ind = np.zeros((lat.shape[0], lon.shape[0], 2), dtype='int32')
+        for i in range(lat.shape[0]):
+            valid_ind[i, :, 0] = i
+        for j in range(lon.shape[0]):
+            valid_ind[:, j, 1] = j
+        valid_ind = valid_ind.reshape((lat.shape[0] * lon.shape[0], 2))
+        # converting the indices of the original data to coordinates
+        valid_pos = np.array([lat[valid_ind[:, 0]], lon[valid_ind[:, 1]]], dtype='float64').T
+    # print(valid_pos)
 
-valid_pos = np.argwhere(u[0].mask == False)
+    dist_sq = np.sum((valid_pos - np.array([_lat, _lon])) ** 2, 1)
+    iy_min, ix_min = valid_ind[dist_sq.argmin()]
 
-iy_min, ix_min = getclosest(valid_pos, in_lat, in_lon)
+    # print(iy_min, ix_min)
+    # print(u.dimensions)
+    # print(u.shape)
+    # print(lon[:])
+    # print(lat[:])
 
-# print(u.dimensions)
-# print(u.shape)
-# print(lon[:])
+    result = np.array([u[:, iy_min, ix_min], v[:, iy_min, ix_min]], dtype='float64').T
+    file.close()
+    return result
 
-print(u[:, iy_min, ix_min])
-
-file.close()
+if __name__ == '__main__':
+    test_data = 'raw/temp.nc'
+    test_lat = 55.6745326
+    test_lon = -4.2738257
+    print(process_wind(test_data, test_lat, test_lon))
