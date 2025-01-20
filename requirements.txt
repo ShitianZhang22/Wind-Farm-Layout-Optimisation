@@ -2,8 +2,5 @@ folium
 streamlit_folium
 pygad
 Optimiser
-data.wind.main
-data.wind.get_wind
-data.wind.process_wind
-data.wind.accumulate
+data
 cdsapi
