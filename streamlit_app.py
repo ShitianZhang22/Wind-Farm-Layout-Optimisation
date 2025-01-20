@@ -70,6 +70,7 @@ MousePosition().add_to(m)
 # Add a form for input
 with st.form('config'):
     st.markdown('### Optimisation Configurations')
+    st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
     st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
     submit = st.form_submit_button('Submit')
 
