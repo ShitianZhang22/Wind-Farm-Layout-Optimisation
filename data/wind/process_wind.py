@@ -1,27 +1,13 @@
 """
-This file is for getting the historical wind data at a given location.
+This file is for getting the historical wind data at a given location from the raw data.
 Input: the directory path of the wind data downloaded
-Return: 
+Return: an (time, 2) ndarray of the u and v component of the hourly wind speed
+
+In the main function for test, the data is stored locally, but this is not necessary when operating.
 """
 
 import netCDF4
 import numpy as np
-
-
-def getclosest(pos_list, _lat_, _lon_):
-    """
-    This function is to find the closest valid position from the selected point
-    `poslist`: an n*2 ndarray including coordinates (lat or lon) with valid data
-    `_lat`: a float number indicating the latitude target
-    `_lon`: a float number indicating the longitude target
-    return: the closest valid position
-    """
-    # find squared distance of every point on grid
-    dist_sq = np.sum((pos_list - np.array([_lat_, _lon_])) ** 2, 1)
-    print(dist_sq.argmin())
-    
-    return dist_sq.argmin()
-
 
 def process_wind(source, _lat, _lon):
     """
@@ -86,4 +72,4 @@ if __name__ == '__main__':
     test_data = 'raw/temp.nc'
     test_lat = 55.6745326
     test_lon = -4.2738257
-    print(process_wind(test_data, test_lat, test_lon))
+    np.savetxt('raw/test_uv.txt', process_wind(test_data, test_lat, test_lon), encoding='utf-8')
