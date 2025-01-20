@@ -4,6 +4,18 @@ This is the configuration file and contains most of the hyperparameters.
 
 import os
 import numpy as np
+from data.wind.main import wind
+
+'''
+wind speed data
+'''
+test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
+dir = 'data/wind/raw/temp.nc'
+
+# For speed, the wind data download is disabled, but it can normally work.
+# If the wind data needs to be downloaded, the website will be rendered after the data is ready.
+# velocity = wind(test_area, dir)
+velocity = wind(test_area, dir, True)
 
 '''
 wind farm data
@@ -14,14 +26,12 @@ rows = 58
 cols = 73
 
 theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi / 4.0, 3 * np.pi / 2.0,
-                  7 * np.pi / 4.0], dtype=np.float32)
-velocity = np.array([4.5] * 8, dtype=np.float32)
+                  7 * np.pi / 4.0], dtype='float64')
 
 hub_height = 80.0  # unit (m)
 surface_roughness = 0.25 * 0.001
 entrainment_const = 0.5 / np.log(hub_height / surface_roughness)
 rotor_radius = 77.0 / 2
-f_theta_v = np.array([0.2, 0.04, 0.15, 0.06, 0.2, 0.1, 0.18, 0.07], dtype=np.float32)
 
 '''
 hyperparameters for GA

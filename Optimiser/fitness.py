@@ -8,7 +8,7 @@ from Optimiser.config import *
 xy position initialisation
 from 1-D index to xy position
 '''
-xy = np.zeros((rows, cols, 2), dtype=np.float32)
+xy = np.zeros((rows, cols, 2), dtype='float64')
 for i in range(rows):
     xy[i, :, 1] = i
 for i in range(cols):
@@ -17,13 +17,13 @@ xy = xy.reshape(rows * cols, 2)
 xy = xy * cell_width + cell_width / 2
 xy = xy.transpose()
 
-trans_matrix = np.zeros((len(theta), 2, 2), dtype=np.float32)
-trans_xy = np.zeros((len(theta), 2, rows * cols), dtype=np.float32)
+trans_matrix = np.zeros((len(theta), 2, 2), dtype='float64')
+trans_xy = np.zeros((len(theta), 2, rows * cols), dtype='float64')
 for i in range(len(theta)):
     trans_matrix[i] = np.array(
         [[np.cos(theta[i]), -np.sin(theta[i])],
          [np.sin(theta[i]), np.cos(theta[i])]],
-        dtype=np.float32)
+        dtype='float64')
     trans_xy[i] = np.matmul(trans_matrix[i], xy)
 
 
@@ -36,16 +36,16 @@ def fitness_func(ga_instance, solution, solution_idx):
 
         speed_deficiency = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * velocity[ind_t]
+        actual_velocity = (1 - speed_deficiency) * velocity[ind_t, 0]
         lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
-        fitness += lp_power.sum() * f_theta_v[ind_t]
+        fitness += lp_power.sum() * velocity[ind_t, 1]
     return fitness
 
 
 def wake(trans_xy_position, n):
     # y value increasingly sort
     sorted_index = np.argsort(trans_xy_position[1, :])
-    wake_deficiency = np.zeros(n, dtype=np.float32)
+    wake_deficiency = np.zeros(n, dtype='float64')
     for j in range(n):
         for k in range(j):
             dx = np.absolute(trans_xy_position[0, sorted_index[j]] - trans_xy_position[0, sorted_index[k]])
@@ -69,7 +69,7 @@ def cal_deficiency(dx, dy):
 
 
 def layout_power(v, n):
-    power = np.zeros(n, dtype=np.float32)
+    power = np.zeros(n, dtype='float64')
     for j in range(n):
         if 2.0 <= v[j] < 18:
             if v[j] < 12.8:
