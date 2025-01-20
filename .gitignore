@@ -3,7 +3,7 @@
 Optimiser/test.py
 Optimiser/__pycache__/
 __pycache__/
-data/wind/raw/
-data/wind/backup/
 data/land/raw/
 trial.py
+data/wind/backup/2024Dec.nc
+data/wind/backup/2024Nov.nc
