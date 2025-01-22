@@ -8,4 +8,5 @@ openpyxl
 pyproj
 Optimiser
 Wind
+CRS
 SiteInit
