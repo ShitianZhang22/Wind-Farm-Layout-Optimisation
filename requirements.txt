@@ -3,5 +3,8 @@ streamlit_folium
 pygad
 cdsapi
 netCDF4
+pandas
+openpyxl
 Optimiser
 Wind
+Init

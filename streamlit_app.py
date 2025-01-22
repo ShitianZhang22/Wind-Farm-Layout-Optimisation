@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
-from Transfer import *
+from Init.Transfer import *
 
 # Page configuration
 st.set_page_config(
@@ -18,7 +18,7 @@ st.markdown('# Wind Farm Layout Optimisation')
 default = {
     'centre': [55.674099775230026, -4.271278381347657],
     'zoom': 12,
-    'site': [[55.6350646, -4.3633451], [55.7140006, -4.1843088]]
+    'site': [[55.634359319706036, -4.364543821199962], [55.71373607139119, -4.183457985564887]]
 }
 
 
