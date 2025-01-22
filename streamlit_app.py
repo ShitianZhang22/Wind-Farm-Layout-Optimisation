@@ -21,7 +21,7 @@ default = {
     'site': [[55.634359319706036, -4.364543821199962], [55.71373607139119, -4.183457985564887]]
 }
 
-
+# [55.71373607139119, -4.364543821199962, 55.634359319706036, -4.183457985564887]
 def initialise_session_state():
     """
     This function is to initialise st.session_state based on default settings.
