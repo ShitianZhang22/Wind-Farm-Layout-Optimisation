@@ -19,6 +19,7 @@ class CRSConvertor:
             # Use the first (and most likely only) result as the projected coordinate system
             pcs = CRS.from_epsg(utm_crs_list[0].code)
             self.transformer = Transformer.from_crs(gcs, pcs, always_xy=True)
+            print('{} is used for the wind farm site.'.format(pcs))
         else:
             raise ValueError("No UTM CRS found for the given location.")
 
@@ -40,7 +41,7 @@ class CRSConvertor:
         return: a tuple of converted coordinates.
         """
         result = self.transformer.transform(_lon, _lat, direction='INVERSE')
-        print(result)
+        # print(result)
         return result[1], result[0]
 
 if __name__ == '__main__':
