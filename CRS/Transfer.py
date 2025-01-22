@@ -9,7 +9,7 @@ def gene_to_pos(gene=None):
         gene = [802, 2176, 3158, 1956, 3622]
 
     # load file
-    grid_map = np.loadtxt('Init/grid.txt', encoding='utf-8')
+    grid_map = np.loadtxt('CRS/grid.txt', encoding='utf-8')
     print(grid_map)
     print(grid_map.shape)
     return grid_map[gene]

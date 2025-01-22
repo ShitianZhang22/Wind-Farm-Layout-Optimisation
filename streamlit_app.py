@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
-from Init.Transfer import *
+from CRS.Transfer import *
 
 # Page configuration
 st.set_page_config(
