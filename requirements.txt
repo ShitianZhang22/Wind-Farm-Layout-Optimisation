@@ -8,4 +8,4 @@ openpyxl
 pyproj
 Optimiser
 Wind
-Site
+-e ./Site/
