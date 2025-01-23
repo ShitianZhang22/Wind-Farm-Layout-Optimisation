@@ -1,3 +1,4 @@
+setuptools
 folium
 streamlit_folium
 pygad
@@ -6,5 +7,6 @@ netCDF4
 pandas
 openpyxl
 pyproj
-Optimiser
-Wind
+-e ./Optimiser/
+-e ./Wind/
+-e ./CRS/

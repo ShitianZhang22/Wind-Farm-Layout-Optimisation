@@ -5,7 +5,9 @@ from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
-from Transfer import *
+# from Transfer import *
+# from CRS.Transfer import *
+from CRS.crs_init import CRSConvertor
 
 # Page configuration
 st.set_page_config(
@@ -18,10 +20,16 @@ st.markdown('# Wind Farm Layout Optimisation')
 default = {
     'centre': [55.674099775230026, -4.271278381347657],
     'zoom': 12,
-    'site': [[55.634359319706036, -4.364543821199962], [55.71373607139119, -4.183457985564887]]
+    'site': [[55.634359319706036, -4.364543821199962], [55.714704134580245, -4.183104393719847]]
 }
 
-# [55.71373607139119, -4.364543821199962, 55.634359319706036, -4.183457985564887]
+
+# 55.714704134580245,
+# -4.364543821199962,
+# 55.634359319706036,
+# -4.183104393719847
+
+
 def initialise_session_state():
     """
     This function is to initialise st.session_state based on default settings.
@@ -79,8 +87,10 @@ if submit:
     reset_session_state()
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
+    site = st.session_state['site']
+    conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
     solution = optimisation(st.session_state['wt_number'])
-    solution = gene_to_pos(solution)
+    solution = conv.gene_to_pos(solution)
     st.session_state['wt_pos'] = solution
 
     # The following part is for site selection, and is closed at the moment.
