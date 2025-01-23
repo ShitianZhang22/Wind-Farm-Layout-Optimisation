@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
 # from Transfer import *
-from CRS.Transfer import *
+# from CRS.Transfer import *
 from CRS.crs_init import CRSConvertor
 
 # Page configuration
@@ -90,7 +90,7 @@ if submit:
     site = st.session_state['site']
     conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
     solution = optimisation(st.session_state['wt_number'])
-    solution = gene_to_pos(solution)
+    solution = conv.gene_to_pos(solution)
     st.session_state['wt_pos'] = solution
 
     # The following part is for site selection, and is closed at the moment.
@@ -141,4 +141,4 @@ fg.add_child(folium.Rectangle(st.session_state['site']))
 # Show map
 st_folium(m, feature_group_to_add=fg, width=900, height=500, key="map1")
 # Show data
-st.write(st.session_state)
+# st.write(st.session_state)

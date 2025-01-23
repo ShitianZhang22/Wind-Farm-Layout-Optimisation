@@ -74,6 +74,15 @@ class CRSConvertor:
         # print(result)
         return result[1], result[0]
     
+    def gene_to_pos(self, _gene):
+        """
+        This function is used in Streamlit_app.py to transform the optimisation result to GCS for visualisation.
+        `_gene`: a list including the one dimensional indices of optimised wind turbines.
+        return: a (n, 2) list of the GCS of wind turbines.
+        """
+        return self.grid_gcs[_gene].tolist()
+
+    
 
 if __name__ == '__main__':
     conv = CRSConvertor([55.714704134580245, -4.364543821199962, 55.634359319706036, -4.183104393719847])

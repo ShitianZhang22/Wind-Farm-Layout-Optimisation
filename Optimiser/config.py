@@ -25,10 +25,8 @@ wind farm data
 '''
 
 # wind farm size in cells
-rows = 58
-cols = 73
-# rows = 56
-# cols = 75
+rows = 56
+cols = 75
 
 theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi / 4.0, 3 * np.pi / 2.0,
                   7 * np.pi / 4.0], dtype='float64')
