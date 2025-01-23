@@ -1,5 +1,5 @@
 """
-This file is not part of the website, but is used once to get the spatial range of the wind farm.
+This file is not part of the website, but is used once to get the bounding box of the Whitelee Wind Farm.
 """
 
 import pandas as pd
@@ -7,11 +7,11 @@ import openpyxl
 import numpy as np
 from crs_init import CRSConvertor
 
-df = pd.read_excel('../data/Turbines_At_Whitelee_Wind_Farm.xlsx', index_col=0).iloc[:, :2]
+df = pd.read_excel('Turbines_At_Whitelee_Wind_Farm.xlsx', index_col=0).iloc[:, :2]
 
 # The bound below is from the spatial range of the original wind turbines
 bound1 = [df['Latitude'].max(), df['Longitude'].min(), df['Latitude'].min(), df['Longitude'].max()]
-# print(bound1)
+print('The original spatial bound according to the wind turbines is {}'.format(bound1))
 conv = CRSConvertor(bound1)
 
 cell_size = 154
@@ -23,6 +23,19 @@ corner1[1] -= cell_size / 2
 corner2 = list(conv.to_pcs(bound1[0], bound1[3]))
 corner2[0] += cell_size / 2
 corner2[1] += cell_size / 2
+
+# based on the two corner points above, get the input bounding box of the wind farm
+corner1_gcs = list(conv.to_gcs(corner1[0], corner1[1]))
+corner2_gcs = list(conv.to_gcs(corner2[0], corner2[1]))
+bound2 = [corner2_gcs[0], corner1_gcs[1], corner1_gcs[0], corner2_gcs[1]]
+print('The input spatial range is {}'.format(bound2))
+
+'''
+[55.714704134580245,
+-4.364543821199962,
+55.634359319706036,
+-4.183104393719847]
+'''
 
 # print(conv.to_gcs(orient[0], orient[1]))
 
@@ -64,4 +77,4 @@ print(grid_gcs)
 print(grid_gcs.shape)
 
 # save the file for coordinate-gene conversion
-np.savetxt('grid.txt', grid_gcs, fmt='%f', encoding='utf-8')
+# np.savetxt('grid.txt', grid_gcs, fmt='%f', encoding='utf-8')
