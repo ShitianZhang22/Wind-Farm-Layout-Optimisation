@@ -8,5 +8,5 @@ pandas
 openpyxl
 pyproj
 Optimiser
-Wind
+-e ./Wind/
 -e ./Site/
