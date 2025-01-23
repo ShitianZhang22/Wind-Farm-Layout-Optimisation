@@ -7,6 +7,6 @@ netCDF4
 pandas
 openpyxl
 pyproj
-Optimiser
+-e ./Optimiser/
 -e ./Wind/
 -e ./Site/
