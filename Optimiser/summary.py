@@ -1,34 +1,34 @@
 """
-This is the fitness function.
+This file is for providing summary for the optimised layout.
 """
 
 from Optimiser.config import *
 
-'''
-xy position initialisation
-from 1-D index to xy position
-'''
-xy = np.zeros((rows, cols, 2), dtype='float64')
-for i in range(rows):
-    xy[i, :, 1] = i
-for i in range(cols):
-    xy[:, i, 0] = i
-xy = xy.reshape(rows * cols, 2)
-xy = xy * cell_width + cell_width / 2
-xy = xy.transpose()
 
-trans_matrix = np.zeros((len(theta), 2, 2), dtype='float64')
-trans_xy = np.zeros((len(theta), 2, rows * cols), dtype='float64')
-for i in range(len(theta)):
-    trans_matrix[i] = np.array(
-        [[np.cos(theta[i]), -np.sin(theta[i])],
-         [np.sin(theta[i]), np.cos(theta[i])]],
-        dtype='float64')
-    trans_xy[i] = np.matmul(trans_matrix[i], xy)
+def summary(solution):
+    '''
+    xy position initialisation
+    from 1-D index to xy position
+    '''
+    xy = np.zeros((rows, cols, 2), dtype='float64')
+    for i in range(rows):
+        xy[i, :, 1] = i
+    for i in range(cols):
+        xy[:, i, 0] = i
+    xy = xy.reshape(rows * cols, 2)
+    xy = xy * cell_width + cell_width / 2
+    xy = xy.transpose()
 
+    trans_matrix = np.zeros((len(theta), 2, 2), dtype='float64')
+    trans_xy = np.zeros((len(theta), 2, rows * cols), dtype='float64')
+    for i in range(len(theta)):
+        trans_matrix[i] = np.array(
+            [[np.cos(theta[i]), -np.sin(theta[i])],
+            [np.sin(theta[i]), np.cos(theta[i])]],
+            dtype='float64')
+        trans_xy[i] = np.matmul(trans_matrix[i], xy)
 
-def fitness_func(ga_instance, solution, solution_idx):
-    num_genes = ga_instance.num_genes
+    num_genes = len(solution)
     fitness = 0  # a specific layout power accumulate
     for ind_t in range(len(theta)):
         # need an extra transpose. the indices will auto trans once
@@ -77,7 +77,6 @@ def layout_power(v, n):
             else:
                 power[j] = 629.1
     return power
-
 
 if __name__ == '__main__':
     a = fitness_func(None, [3349, 2685, 3663, 896, 2268, 4090, 266, 3303, 1824, 3428, 964, 163, 2391, 1111, 738, 1044, 3098, 2460, 1804, 2833], 0)

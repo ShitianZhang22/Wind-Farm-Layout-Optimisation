@@ -92,7 +92,8 @@ with col1:
 
         site = st.session_state['site']
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-        solution = optimisation(st.session_state['wt_number'])
+        rows = conv.rows
+        solution = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
         solution = conv.gene_to_pos(solution)
         st.session_state['wt_pos'] = solution
 
