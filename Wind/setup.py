@@ -1,5 +1,5 @@
 """
-aaa
+This file is just to ensure local package installation.
 """
 from setuptools import setup, find_packages
 
