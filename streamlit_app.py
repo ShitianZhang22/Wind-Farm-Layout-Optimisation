@@ -46,6 +46,10 @@ def initialise_session_state():
         st.session_state['centre'] = default['centre']
     if 'zoom' not in st.session_state:
         st.session_state['zoom'] = default['zoom']
+    if 'site_summary' not in st.session_state:
+        st.session_state['site_summary'] = []
+    if 'wt_summary' not in st.session_state:
+        st.session_state['wt_summary'] = None
 
 
 def reset_session_state():
@@ -60,6 +64,9 @@ def reset_session_state():
     # Reset the map range
     st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
+    # Reset data
+    st.session_state['site_summary'] = []
+    st.session_state['wt_summary'] = None
 
 
 def initialise_map(centre, zoom):
@@ -84,6 +91,12 @@ with col1:
         st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
         st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
         submit = st.form_submit_button('Submit')
+    
+    if len(st.session_state['site_summary']) != 0:
+        st.markdown('The estimated Annual Energy Production is')
+        st.markdown('## {:.2f} MWh'.format(st.session_state['site_summary'][0]))
+        st.markdown('with the overall efficiency of')
+        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
 
     # on clicking the submit button
     if submit:
@@ -93,8 +106,9 @@ with col1:
         site = st.session_state['site']
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
         rows = conv.rows
-        solution = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
+        solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
         solution = conv.gene_to_pos(solution)
+        st.session_state['site_summary'] = [summary, efficiency]
         st.session_state['wt_pos'] = solution
 
         # The following part is for site selection, and is closed at the moment.
@@ -144,5 +158,16 @@ with col2:
     if st.button('Clear All'):
         reset_session_state()
         m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+
+if len(st.session_state['site_summary']) != 0:
+    st.markdown('### Data of wind turbines')
+    st.dataframe(
+        st.session_state['wt_summary'],
+        hide_index=True,
+        column_config={
+            'Annual Energy Production': st.column_config.NumberColumn(format='%.2f kWh'),
+            'Efficiency': st.column_config.NumberColumn(format='%.2f %%'),
+        },
+        )
 # Show data
 # st.write(st.session_state)
