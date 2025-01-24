@@ -24,10 +24,6 @@ velocity = wind(test_area, dir, y, m, True)
 wind farm data
 '''
 
-# wind farm size in cells
-rows = 56
-cols = 75
-
 theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi / 4.0, 3 * np.pi / 2.0,
                   7 * np.pi / 4.0], dtype='float64')
 
@@ -46,20 +42,7 @@ sol_per_pop = 10
 select_rate = 0.3
 num_parents_mating = int(sol_per_pop * select_rate)
 
-# num_genes = 5  # number of wind turbines
-# an array can be used in gene_space to manually set all available positions for a turbine
-gene_space = list(range(rows * cols))
-restriction = False # whether there are unavailable cells
-if restriction:
-    unavailable = np.loadtxt(r'data/Unavailable_Cells.txt', dtype='int', delimiter=',', encoding='utf-8')
-    unavailable = np.argwhere(unavailable.reshape(rows * cols))
-    unavailable = unavailable.reshape(unavailable.shape[0])
-    for i in range(unavailable.shape[0]-1, -1, -1):
-        gene_space.pop(unavailable[i])
-
-
 cell_width = 77.0 * 2  # unit : m
-init_range_high = rows * cols - 1
 
 parent_selection_type = 'sss'
 keep_parents = -1

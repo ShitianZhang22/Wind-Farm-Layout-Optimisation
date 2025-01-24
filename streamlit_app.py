@@ -46,6 +46,10 @@ def initialise_session_state():
         st.session_state['centre'] = default['centre']
     if 'zoom' not in st.session_state:
         st.session_state['zoom'] = default['zoom']
+    if 'site_summary' not in st.session_state:
+        st.session_state['site_summary'] = []
+    if 'wt_summary' not in st.session_state:
+        st.session_state['wt_summary'] = None
 
 
 def reset_session_state():
@@ -60,6 +64,9 @@ def reset_session_state():
     # Reset the map range
     st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
+    # Reset data
+    st.session_state['site_summary'] = []
+    st.session_state['wt_summary'] = None
 
 
 def initialise_map(centre, zoom):
@@ -75,62 +82,69 @@ MousePosition().add_to(m)
 # Enable export without the edit parameter
 # Draw(export=True).add_to(m)
 
+# Set two columns
+col1, col2 = st.columns([1, 3])
 # Add a form for input
-with st.form('config'):
-    st.markdown('### Optimisation Configurations')
-    st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
-    st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
-    submit = st.form_submit_button('Submit')
+with col1:
+    with st.form('config'):
+        st.markdown('### Configurations')
+        st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
+        st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
+        submit = st.form_submit_button('Submit')
+    
+    if len(st.session_state['site_summary']) != 0:
+        st.markdown('The estimated Annual Energy Production is')
+        st.markdown('## {:.2f} MWh'.format(st.session_state['site_summary'][0]))
+        st.markdown('with the overall efficiency of')
+        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
 
-# on clicking the submit button
-if submit:
-    reset_session_state()
-    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+    # on clicking the submit button
+    if submit:
+        reset_session_state()
+        m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
-    site = st.session_state['site']
-    conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-    solution = optimisation(st.session_state['wt_number'])
-    solution = conv.gene_to_pos(solution)
-    st.session_state['wt_pos'] = solution
+        site = st.session_state['site']
+        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
+        rows = conv.rows
+        solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
+        solution = conv.gene_to_pos(solution)
+        st.session_state['site_summary'] = [summary, efficiency]
+        st.session_state['wt_pos'] = solution
 
-    # The following part is for site selection, and is closed at the moment.
-    # if draw_result:
-    #     st.write("Debug draw_result data:", draw_result)
-    #     print(draw_result)
-    #
-    #     # Attempt to extract from bounds
-    #     if "bounds" in draw_result:
-    #         bounds = draw_result["bounds"]
-    #         lat_min = bounds["_southWest"]["lat"]
-    #         lon_min = bounds["_southWest"]["lng"]
-    #         lat_max = bounds["_northEast"]["lat"]
-    #         lon_max = bounds["_northEast"]["lng"]
-    #
-    #         st.write(f"Latitude and longitude ranges for selected areas:")
-    #         st.write(f"The latitude range is from: {lat_min} to {lat_max}")
-    #         st.write(f"The longitude range is from: {lon_min} to {lon_max}")
-    #
-    #     # Attempt to extract from features
-    #     elif "features" in draw_result and len(draw_result["features"]) > 0:
-    #         feature = draw_result["features"][0]
-    #         if "geometry" in feature and feature["geometry"]["type"] == "Polygon":
-    #             coordinates = feature["geometry"]["coordinates"][0]
-    #             lat_min = min([coord[1] for coord in coordinates])
-    #             lat_max = max([coord[1] for coord in coordinates])
-    #             lon_min = min([coord[0] for coord in coordinates])
-    #             lon_max = max([coord[0] for coord in coordinates])
-    #
-    #             st.write(f"Latitude and longitude ranges for selected areas:")
-    #             st.write(f"The latitude range is from: {lat_min} to {lat_max}")
-    #             st.write(f"The longitude range is from: {lon_min} to {lon_max}")
-    #     else:
-    #         st.write("No valid region data detected, please re-frame!")
-    # else:
-    #     st.write("Please box an area first!")
-
-if st.button('Clear All'):
-    reset_session_state()
-    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+        # The following part is for site selection, and is closed at the moment.
+        # if draw_result:
+        #     st.write("Debug draw_result data:", draw_result)
+        #     print(draw_result)
+        #
+        #     # Attempt to extract from bounds
+        #     if "bounds" in draw_result:
+        #         bounds = draw_result["bounds"]
+        #         lat_min = bounds["_southWest"]["lat"]
+        #         lon_min = bounds["_southWest"]["lng"]
+        #         lat_max = bounds["_northEast"]["lat"]
+        #         lon_max = bounds["_northEast"]["lng"]
+        #
+        #         st.write(f"Latitude and longitude ranges for selected areas:")
+        #         st.write(f"The latitude range is from: {lat_min} to {lat_max}")
+        #         st.write(f"The longitude range is from: {lon_min} to {lon_max}")
+        #
+        #     # Attempt to extract from features
+        #     elif "features" in draw_result and len(draw_result["features"]) > 0:
+        #         feature = draw_result["features"][0]
+        #         if "geometry" in feature and feature["geometry"]["type"] == "Polygon":
+        #             coordinates = feature["geometry"]["coordinates"][0]
+        #             lat_min = min([coord[1] for coord in coordinates])
+        #             lat_max = max([coord[1] for coord in coordinates])
+        #             lon_min = min([coord[0] for coord in coordinates])
+        #             lon_max = max([coord[0] for coord in coordinates])
+        #
+        #             st.write(f"Latitude and longitude ranges for selected areas:")
+        #             st.write(f"The latitude range is from: {lat_min} to {lat_max}")
+        #             st.write(f"The longitude range is from: {lon_min} to {lon_max}")
+        #     else:
+        #         st.write("No valid region data detected, please re-frame!")
+        # else:
+        #     st.write("Please box an area first!")
 
 fg = folium.FeatureGroup(name='Wind_Turbines')
 for pos in st.session_state['wt_pos']:
@@ -138,7 +152,22 @@ for pos in st.session_state['wt_pos']:
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
 
-# Show map
-st_folium(m, feature_group_to_add=fg, width=900, height=500, key="map1")
+with col2:
+    # Show map
+    st_folium(m, feature_group_to_add=fg, width=800, height=500, key="map1")
+    if st.button('Clear All'):
+        reset_session_state()
+        m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+
+if len(st.session_state['site_summary']) != 0:
+    st.markdown('### Data of wind turbines')
+    st.dataframe(
+        st.session_state['wt_summary'],
+        hide_index=True,
+        column_config={
+            'Annual Energy Production': st.column_config.NumberColumn(format='%.2f kWh'),
+            'Efficiency': st.column_config.NumberColumn(format='%.2f %%'),
+        },
+        )
 # Show data
 # st.write(st.session_state)
