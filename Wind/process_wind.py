@@ -72,4 +72,5 @@ if __name__ == '__main__':
     test_data = 'raw/temp.nc'
     test_lat = 55.6745326
     test_lon = -4.2738257
-    np.savetxt('raw/test_uv.txt', process_wind(test_data, test_lat, test_lon), encoding='utf-8')
+    print(process_wind(test_data, test_lat, test_lon))
+    # np.savetxt('raw/test_uv.txt', process_wind(test_data, test_lat, test_lon), encoding='utf-8')

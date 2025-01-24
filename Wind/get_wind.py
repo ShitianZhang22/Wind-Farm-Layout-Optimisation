@@ -18,6 +18,7 @@ def get_wind(area, save_dir, year, month):
     Return: No return
     The downloaded data will be stored in Wind/raw/temp.nc
     """
+    print('Requesting data in {}'.format((year, month)))
     year = str(year)
     month = str(month)
 
@@ -62,6 +63,6 @@ def get_wind(area, save_dir, year, month):
 
 
 if __name__ == '__main__':
-    test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
+    test_area = [55.714704134580245, -4.364543821199962, 55.634359319706036, -4.183104393719847]
     dir = 'raw/temp.nc'
     get_wind(test_area, dir, '2024', '12')
