@@ -82,34 +82,26 @@ MousePosition().add_to(m)
 # Enable export without the edit parameter
 # Draw(export=True).add_to(m)
 
-# Set two columns
-col1, col2 = st.columns([1, 3])
+# The first section of Optimisation Request Form
+st.markdown('## Optimisation Request Form')
 # Add a form for input
-with col1:
-    with st.form('config'):
-        st.markdown('### Configurations')
-        st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
-        st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
-        submit = st.form_submit_button('Submit')
-    
-    if len(st.session_state['site_summary']) != 0:
-        st.markdown('The estimated Annual Energy Production is')
-        st.markdown('## {:.2f} MWh'.format(st.session_state['site_summary'][0]))
-        st.markdown('with the overall efficiency of')
-        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
+with st.form('config'):
+    st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
+    st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
+    submit = st.form_submit_button('Submit')
 
-    # on clicking the submit button
-    if submit:
-        reset_session_state()
-        m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+# on clicking the submit button
+if submit:
+    reset_session_state()
+    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
-        site = st.session_state['site']
-        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-        rows = conv.rows
-        solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
-        solution = conv.gene_to_pos(solution)
-        st.session_state['site_summary'] = [summary, efficiency]
-        st.session_state['wt_pos'] = solution
+    site = st.session_state['site']
+    conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
+    rows = conv.rows
+    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
+    solution = conv.gene_to_pos(solution)
+    st.session_state['site_summary'] = [summary, efficiency]
+    st.session_state['wt_pos'] = solution
 
         # The following part is for site selection, and is closed at the moment.
         # if draw_result:
@@ -146,28 +138,42 @@ with col1:
         # else:
         #     st.write("Please box an area first!")
 
+# st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
 for pos in st.session_state['wt_pos']:
     fg.add_child(folium.Marker(pos))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
+# Show map
+st_folium(m, feature_group_to_add=fg, width=1000, height=500, key="map1")
+# if st.button('Clear All'):
+#     reset_session_state()
+#     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+
+# The last part of summary
+st.markdown('## Summary')
+
+col1, col2 = st.columns(2)
+with col1:
+    if len(st.session_state['site_summary']) != 0:
+        st.markdown('- ### Data of wind farm site')
+        st.markdown('The estimated Annual Energy Production is')
+        st.markdown('## {:.2f} MWh'.format(st.session_state['site_summary'][0]))
+        st.markdown('with the overall efficiency of')
+        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
+    else:
+        st.markdown('Please run optimisation first!')
 
 with col2:
-    # Show map
-    st_folium(m, feature_group_to_add=fg, width=800, height=500, key="map1")
-    if st.button('Clear All'):
-        reset_session_state()
-        m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
-
-if len(st.session_state['site_summary']) != 0:
-    st.markdown('### Data of wind turbines')
-    st.dataframe(
-        st.session_state['wt_summary'],
-        hide_index=True,
-        column_config={
-            'Annual Energy Production': st.column_config.NumberColumn(format='%.2f kWh'),
-            'Efficiency': st.column_config.NumberColumn(format='%.2f %%'),
-        },
-        )
+    if len(st.session_state['site_summary']) != 0:
+        st.markdown('- ### Data of wind turbines')
+        st.dataframe(
+            st.session_state['wt_summary'],
+            hide_index=True,
+            column_config={
+                'Annual Energy Production': st.column_config.NumberColumn(format='%.2f kWh'),
+                'Efficiency': st.column_config.NumberColumn(format='%.2f %%'),
+            },
+            )
 # Show data
 # st.write(st.session_state)
