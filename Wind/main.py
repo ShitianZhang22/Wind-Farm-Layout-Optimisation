@@ -11,11 +11,12 @@ Return: an (8, 2) ndarray of the average wind speed and frequency at 8 direction
 from Wind.get_wind import get_wind
 from Wind.process_wind import process_wind
 from Wind.accumulate import accumulate
+from Wind.local_summary import local_sum
 import os
 import numpy as np
 
 
-def wind(area, save_dir, years, months, test=False):
+def wind(area, save_dir, years, months, test=False, local=True):
     """
     This is the master structure managing the process of wind data.
 
@@ -24,20 +25,24 @@ def wind(area, save_dir, years, months, test=False):
     `years`: a list of strings including the years
     `months`: a list of strings including the months
     `*test`: a bool for triggering test mode, where the data downloading process is skipped.
+    `*local`: a bool for triggering local mode, where local post-processed data is used.
     Return: an (8, 2) ndarray of the average wind speed and frequency at 8 directions
     """
     # get the centre of the site
     lat, lon = (area[0] + area[2]) / 2, (area[1] + area[3]) / 2
-    if test: 
-        raw_wind = process_wind('Wind/backup/temp.nc', lat, lon)
+    if local:
+        return local_sum(save_dir, lat, lon)
     else:
-        raw_wind = np.zeros((0, 2), dtype='float64')
-        for i in range(len(years)):
-            for j in range(len(months)):
-                get_wind(area, save_dir, years[i], months[j])
-                raw_wind = np.concatenate((raw_wind, process_wind(save_dir, lat, lon)), axis=0)
-                os.remove(save_dir)
-    return accumulate(raw_wind)
+        if test: 
+            raw_wind = process_wind('Wind/backup/temp.nc', lat, lon)
+        else:
+            raw_wind = np.zeros((0, 2), dtype='float64')
+            for i in range(len(years)):
+                for j in range(len(months)):
+                    get_wind(area, save_dir, years[i], months[j])
+                    raw_wind = np.concatenate((raw_wind, process_wind(save_dir, lat, lon)), axis=0)
+                    os.remove(save_dir)
+        return accumulate(raw_wind)
 
 if __name__ == '__main__':
     test_area = [55.7146943, -4.364574, 55.6343709, -4.1830774]
