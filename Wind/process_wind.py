@@ -52,7 +52,7 @@ def process_wind(source, _lat, _lon):
             valid_ind[:, j, 1] = j
         valid_ind = valid_ind.reshape((lat.shape[0] * lon.shape[0], 2))
         # converting the indices of the original data to coordinates
-        valid_pos = np.array([lat[valid_ind[:, 0]], lon[valid_ind[:, 1]]], dtype='float64').T
+    valid_pos = np.array([lat[valid_ind[:, 0]], lon[valid_ind[:, 1]]], dtype='float64').T
     # print(valid_pos)
 
     dist_sq = np.sum((valid_pos - np.array([_lat, _lon])) ** 2, 1)

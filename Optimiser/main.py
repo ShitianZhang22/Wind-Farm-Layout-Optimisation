@@ -141,7 +141,7 @@ def optimisation(wt_number, rows, cols):
         'Efficiency': wt_efficiency * 100
         })
     
-    print(wt)
+    # print(wt)
     
     return solution, float(wt_summary.sum()), float(efficiency), wt
 

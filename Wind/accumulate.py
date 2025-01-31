@@ -10,7 +10,7 @@ import numpy as np
 def accumulate(uv):
     """
     This function is for converting the hourly wind data to the annual wind distribution.
-    `uv`: an (time, 2) ndarray of the u and v component of the hourly wind speed in uv form
+    `uv`: a (time, 2) ndarray of the u and v component of the hourly wind speed in uv form
     Return: an (8, 2) ndarray of the average wind speed and frequency at 8 directions
     """
     # print(uv)
