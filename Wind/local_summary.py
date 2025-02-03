@@ -23,7 +23,7 @@ def local_sum(source, _lat, _lon):
     lat = file.variables['latitude']
     lon = file.variables['longitude']
 
-    print(speed[:].shape)
+    # print(speed[:].shape)
 
     '''
     There is a problem with the mask. If there is no masked area in the requested region,

@@ -42,8 +42,13 @@ def initialise_session_state():
     if 'site' not in st.session_state:
         st.session_state['site'] = default['site']
     # history
-    if 'last_site' not in st.session_state:
-        st.session_state['history'] = {}
+    if 'history' not in st.session_state:
+        st.session_state['history'] = {
+        'site': None,
+        'conv': None,
+        'wind': None,
+        'feasible_cell': None,
+    }
     # Initialise map position
     if 'centre' not in st.session_state:
         st.session_state['centre'] = default['centre']
@@ -94,15 +99,19 @@ with st.form('config'):
 # on clicking the submit button
 if submit:
     reset_session_state()
-    # if the site is the same with the previous one, we don't need to get the wind data and land data again.
-    # if st.session_state['site'] == st.session_state['history']:
-
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
     site = st.session_state['site']
-    conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-    feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
-    wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/backup/summary-1d.nc', ['2024'], ['12'], True, True)
+
+    # if the site is the same with the previous one, we don't need to get the wind data and land data again.
+    if site == st.session_state['history']['site']:
+        conv = st.session_state['history']['conv']
+        wind_data = st.session_state['history']['wind']
+        feasible_cell = st.session_state['history']['feasible_cell']
+    else:
+        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
+        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/backup/summary-1d.nc', ['2024'], ['12'], True, True)
+        feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
     solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
@@ -112,7 +121,8 @@ if submit:
     st.session_state['history'] = {
         'site': st.session_state['site'].copy(),
         'conv': conv,
-        'feasible_cell': feasible_cell,
+        'wind': wind_data.copy(),
+        'feasible_cell': feasible_cell.copy(),
     }
 
         # The following part is for site selection, and is closed at the moment.
