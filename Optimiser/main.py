@@ -11,11 +11,13 @@ import pygad
 from Optimiser.config import *
 import pandas as pd
 # from Optimiser.fitness_pre import fitness_func
-# from Optimiser.fitness import fitness_func
 # import time
 # import cProfile
 
 # t = time.time()
+
+# locally define a variable for storing the wind data
+_wind_data = None
 
 
 def on_start(ga):
@@ -25,14 +27,19 @@ def on_start(ga):
 def on_generation(ga):
     print("Generation", ga.generations_completed)
 
-def optimisation(wt_number, rows, cols):
+def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     """
     This is the main function of optimisation. It is called once when the user send an optimisation request.
     First, it prepares some variables used for optimisation.
     Then it creates an Pygad.GA instance and runs the optimisation.
     Finally, it provides the summary for the optimal layout.
+    `wt_number`: an integer of wind turbine numbers.
+    `rows` and `cols`: integers of rows and columns in the grid.
+    `wind`:  an (8, 2) ndarray of the average wind speed and frequency at 8 directions
+    `feasible_loc`: a list of feasible locations represented by genes. If it is None, then all positions are regareded feasible.
     """
     global trans_xy
+    global _wind_data
 
     print('Rows:{}\nColumns:{}'.format(rows, cols))
     # print('Number of genes:{}'.format(wt_number))
@@ -40,15 +47,14 @@ def optimisation(wt_number, rows, cols):
     '''
     Parameter preparation.
     '''
-    # an array can be used in gene_space to manually set all available positions for a turbine
-    gene_space = list(range(rows * cols))
-    restriction = False # whether there are unavailable cells
-    if restriction:
-        unavailable = np.loadtxt(r'data/Unavailable_Cells.txt', dtype='int', delimiter=',', encoding='utf-8')
-        unavailable = np.argwhere(unavailable.reshape(rows * cols))
-        unavailable = unavailable.reshape(unavailable.shape[0])
-        for i in range(unavailable.shape[0]-1, -1, -1):
-            gene_space.pop(unavailable[i])
+
+    # store the local data into global varialbes
+    _wind_data = wind_data.copy()
+    if feasible_loc is None:
+        # an array can be used in gene_space to manually set all available positions for a turbine
+        gene_space = list(range(rows * cols))
+    else:
+        gene_space = feasible_loc
 
     '''
     xy position initialisation
@@ -120,11 +126,11 @@ def optimisation(wt_number, rows, cols):
 
         speed_deficiency = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * velocity[ind_t, 0]
+        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
         lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
-        wt_summary += lp_power * velocity[ind_t, 1]  # the weight of wind frequency at a given direction
+        wt_summary += lp_power * _wind_data[ind_t, 1]  # the weight of wind frequency at a given direction
         
-        ideal_power += layout_power([velocity[ind_t, 0]], 1)[0] * velocity[ind_t, 1]
+        ideal_power += layout_power([_wind_data[ind_t, 0]], 1)[0] * _wind_data[ind_t, 1]
     
     wt_efficiency = wt_summary / ideal_power
     efficiency = wt_efficiency.mean()
@@ -157,9 +163,9 @@ def fitness_func(ga_instance, solution, solution_idx):
 
         speed_deficiency = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * velocity[ind_t, 0]
+        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
         lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
-        fitness += lp_power.sum() * velocity[ind_t, 1]
+        fitness += lp_power.sum() * _wind_data[ind_t, 1]
     return fitness
 
 

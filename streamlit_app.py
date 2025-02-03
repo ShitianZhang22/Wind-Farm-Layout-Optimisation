@@ -5,9 +5,9 @@ from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
-# from Transfer import *
-# from CRS.Transfer import *
 from CRS.crs_init import CRSConvertor
+from Wind.main import wind
+from Land.main import land
 
 # Page configuration
 st.set_page_config(
@@ -41,6 +41,14 @@ def initialise_session_state():
     # Initialise the wind farm site boundaries
     if 'site' not in st.session_state:
         st.session_state['site'] = default['site']
+    # history
+    if 'history' not in st.session_state:
+        st.session_state['history'] = {
+        'site': None,
+        'conv': None,
+        'wind': None,
+        'feasible_cell': None,
+    }
     # Initialise map position
     if 'centre' not in st.session_state:
         st.session_state['centre'] = default['centre']
@@ -59,8 +67,6 @@ def reset_session_state():
     """
     # Reset session state for wind turbine locations
     st.session_state['wt_pos'] = []
-    # Reset the wind farm site boundaries
-    st.session_state['site'] = default['site']
     # Reset the map range
     st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
@@ -96,12 +102,28 @@ if submit:
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
     site = st.session_state['site']
-    conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-    rows = conv.rows
-    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
+
+    # if the site is the same with the previous one, we don't need to get the wind data and land data again.
+    if site == st.session_state['history']['site']:
+        conv = st.session_state['history']['conv']
+        wind_data = st.session_state['history']['wind']
+        feasible_cell = st.session_state['history']['feasible_cell']
+    else:
+        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
+        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/backup/summary-1d.nc', ['2024'], ['12'], True, True)
+        feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
+    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
     st.session_state['wt_pos'] = solution
+
+    # save history
+    st.session_state['history'] = {
+        'site': st.session_state['site'].copy(),
+        'conv': conv,
+        'wind': wind_data.copy(),
+        'feasible_cell': feasible_cell.copy(),
+    }
 
         # The following part is for site selection, and is closed at the moment.
         # if draw_result:

@@ -17,11 +17,6 @@ def process_wind(path):
     # spatial resolution (resolution * 0.1 degree)
     resolution = 10
 
-    # create dimensions
-    # lat = summary.createDimension('latitude', 1801)
-    # lon = summary.createDimension('longitude', 3600)
-    # dir = summary.createDimension('direction', 8)
-
     summary.createDimension('latitude', 181)
     summary.createDimension('longitude', 360)
     summary.createDimension('direction', 8)
