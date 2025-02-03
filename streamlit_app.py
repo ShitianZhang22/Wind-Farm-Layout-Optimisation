@@ -3,6 +3,7 @@ import folium
 from folium.plugins import MousePosition, Draw
 from streamlit_folium import st_folium
 import streamlit.components.v1 as components
+import numpy as np
 
 from Optimiser.main import optimisation
 from CRS.crs_init import CRSConvertor
@@ -67,22 +68,14 @@ def reset_session_state():
     """
     # Reset session state for wind turbine locations
     st.session_state['wt_pos'] = []
-    # # Reset the map range
-    # st.session_state['centre'] = default['centre']
-    st.session_state['zoom'] = default['zoom']
     # Reset data
     st.session_state['site_summary'] = []
     st.session_state['wt_summary'] = None
 
 
-def initialise_map(centre, zoom):
-    _m = folium.Map(location=centre, zoom_start=zoom)
-    return _m
-
-
 # Initialisation
 initialise_session_state()
-m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
 MousePosition().add_to(m)
 
 # Enable export without the edit parameter
@@ -114,13 +107,16 @@ if submit:
             st.session_state['site'] = [[shape[0][1], shape[0][0]], [shape[2][1], shape[2][0]]]
             site = st.session_state['site']
             st.session_state['centre'] = [(site[0][0] + site[1][0]) / 2, (site[0][1] + site[1][1]) / 2]
+            st.session_state['zoom'] = np.floor(np.log2(360 * 500 / 256 / (site[1][0] - site[0][0]))) - 1
+    # option of case study        
     else:
         st.session_state['site'] = default['site']
         st.session_state['centre'] = default['centre']
+        st.session_state['zoom'] = default['zoom']
 
 
     reset_session_state()
-    m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+    m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
 
     site = st.session_state['site']
 
@@ -154,10 +150,7 @@ for pos in st.session_state['wt_pos']:
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
 # Show map
-st_folium(m, feature_group_to_add=fg, width=1000, height=500, key="map1")
-# if st.button('Clear All'):
-#     reset_session_state()
-#     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
+st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_width=True)
 
 # The last part of summary
 st.markdown('## Summary')
@@ -185,4 +178,4 @@ with col2:
             },
             )
 # Show data
-st.write(st.session_state)
+# st.write(st.session_state)
