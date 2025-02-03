@@ -112,8 +112,11 @@ if submit:
         if st.session_state['map1']['last_active_drawing'] is not None:
             shape = st.session_state['map1']['last_active_drawing']['geometry']['coordinates'][0]
             st.session_state['site'] = [[shape[0][1], shape[0][0]], [shape[2][1], shape[2][0]]]
+            site = st.session_state['site']
+            st.session_state['centre'] = [(site[0][0] + site[1][0]) / 2, (site[0][1] + site[1][1]) / 2]
     else:
         st.session_state['site'] = default['site']
+        st.session_state['centre'] = default['centre']
 
 
     reset_session_state()
@@ -143,40 +146,6 @@ if submit:
         'feasible_cell': feasible_cell.copy(),
     }
 
-        # The following part is for site selection, and is closed at the moment.
-        # if draw_result:
-        #     st.write("Debug draw_result data:", draw_result)
-        #     print(draw_result)
-        #
-        #     # Attempt to extract from bounds
-        #     if "bounds" in draw_result:
-        #         bounds = draw_result["bounds"]
-        #         lat_min = bounds["_southWest"]["lat"]
-        #         lon_min = bounds["_southWest"]["lng"]
-        #         lat_max = bounds["_northEast"]["lat"]
-        #         lon_max = bounds["_northEast"]["lng"]
-        #
-        #         st.write(f"Latitude and longitude ranges for selected areas:")
-        #         st.write(f"The latitude range is from: {lat_min} to {lat_max}")
-        #         st.write(f"The longitude range is from: {lon_min} to {lon_max}")
-        #
-        #     # Attempt to extract from features
-        #     elif "features" in draw_result and len(draw_result["features"]) > 0:
-        #         feature = draw_result["features"][0]
-        #         if "geometry" in feature and feature["geometry"]["type"] == "Polygon":
-        #             coordinates = feature["geometry"]["coordinates"][0]
-        #             lat_min = min([coord[1] for coord in coordinates])
-        #             lat_max = max([coord[1] for coord in coordinates])
-        #             lon_min = min([coord[0] for coord in coordinates])
-        #             lon_max = max([coord[0] for coord in coordinates])
-        #
-        #             st.write(f"Latitude and longitude ranges for selected areas:")
-        #             st.write(f"The latitude range is from: {lat_min} to {lat_max}")
-        #             st.write(f"The longitude range is from: {lon_min} to {lon_max}")
-        #     else:
-        #         st.write("No valid region data detected, please re-frame!")
-        # else:
-        #     st.write("Please box an area first!")
 
 # st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
