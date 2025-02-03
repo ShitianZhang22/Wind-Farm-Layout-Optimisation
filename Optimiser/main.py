@@ -44,6 +44,8 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     print('Rows:{}\nColumns:{}'.format(rows, cols))
     # print('Number of genes:{}'.format(wt_number))
 
+    # print(wt_number, rows, cols, wind_data, feasible_loc)
+
     '''
     Parameter preparation.
     '''
@@ -132,7 +134,10 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
         
         ideal_power += layout_power([_wind_data[ind_t, 0]], 1)[0] * _wind_data[ind_t, 1]
     
-    wt_efficiency = wt_summary / ideal_power
+    if ideal_power != 0:  # avoid the scenario of dividing zero
+        wt_efficiency = wt_summary / ideal_power
+    else:
+        wt_efficiency = np.zeros((num_genes,), dtype='float64')
     efficiency = wt_efficiency.mean()
     '''
     The power prediction is not correct at the moment.

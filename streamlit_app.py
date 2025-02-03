@@ -1,6 +1,6 @@
 import streamlit as st
 import folium
-from folium.plugins import MousePosition
+from folium.plugins import MousePosition, Draw
 from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
@@ -67,8 +67,8 @@ def reset_session_state():
     """
     # Reset session state for wind turbine locations
     st.session_state['wt_pos'] = []
-    # Reset the map range
-    st.session_state['centre'] = default['centre']
+    # # Reset the map range
+    # st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
     # Reset data
     st.session_state['site_summary'] = []
@@ -86,18 +86,36 @@ m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 MousePosition().add_to(m)
 
 # Enable export without the edit parameter
-# Draw(export=True).add_to(m)
+draw = Draw(draw_options={
+    'polyline': False,
+    'polygon': False,
+    'rectangle': {},
+    'circle': False,
+    'marker': False,
+    'circlemarker': False,
+    })
+draw.add_to(m)
 
 # The first section of Optimisation Request Form
 st.markdown('## Optimisation Request Form')
 # Add a form for input
 with st.form('config'):
-    st.selectbox('Wind farm site:', ('Whitelee Wind Farm'), key='case')
+    st.selectbox('Wind farm site:', ('User defined area in the map', 'Whitelee Wind Farm'), key='case')
     st.number_input('Wind turbine number:', min_value=1, step=1, key='wt_number')
     submit = st.form_submit_button('Submit')
 
 # on clicking the submit button
 if submit:
+
+    # option of customised site
+    if st.session_state['case'] == 'User defined area in the map':
+        if st.session_state['map1']['last_active_drawing'] is not None:
+            shape = st.session_state['map1']['last_active_drawing']['geometry']['coordinates'][0]
+            st.session_state['site'] = [[shape[0][1], shape[0][0]], [shape[2][1], shape[2][0]]]
+    else:
+        st.session_state['site'] = default['site']
+
+
     reset_session_state()
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
@@ -198,4 +216,4 @@ with col2:
             },
             )
 # Show data
-# st.write(st.session_state)
+st.write(st.session_state)
