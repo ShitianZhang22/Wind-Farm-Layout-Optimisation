@@ -6,6 +6,7 @@ import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
 from CRS.crs_init import CRSConvertor
+from Wind.main import wind
 from Land.main import land
 
 # Page configuration
@@ -40,6 +41,9 @@ def initialise_session_state():
     # Initialise the wind farm site boundaries
     if 'site' not in st.session_state:
         st.session_state['site'] = default['site']
+    # history
+    if 'last_site' not in st.session_state:
+        st.session_state['history'] = {}
     # Initialise map position
     if 'centre' not in st.session_state:
         st.session_state['centre'] = default['centre']
@@ -58,8 +62,6 @@ def reset_session_state():
     """
     # Reset session state for wind turbine locations
     st.session_state['wt_pos'] = []
-    # Reset the wind farm site boundaries
-    st.session_state['site'] = default['site']
     # Reset the map range
     st.session_state['centre'] = default['centre']
     st.session_state['zoom'] = default['zoom']
@@ -92,15 +94,26 @@ with st.form('config'):
 # on clicking the submit button
 if submit:
     reset_session_state()
+    # if the site is the same with the previous one, we don't need to get the wind data and land data again.
+    # if st.session_state['site'] == st.session_state['history']:
+
     m = initialise_map(st.session_state['centre'], st.session_state['zoom'])
 
     site = st.session_state['site']
     conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
     feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
-    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, feasible_cell)
+    wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/backup/summary-1d.nc', ['2024'], ['12'], True, True)
+    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
     st.session_state['wt_pos'] = solution
+
+    # save history
+    st.session_state['history'] = {
+        'site': st.session_state['site'].copy(),
+        'conv': conv,
+        'feasible_cell': feasible_cell,
+    }
 
         # The following part is for site selection, and is closed at the moment.
         # if draw_result:
