@@ -5,9 +5,8 @@ from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 from Optimiser.main import optimisation
-# from Transfer import *
-# from CRS.Transfer import *
 from CRS.crs_init import CRSConvertor
+from Land.main import land
 
 # Page configuration
 st.set_page_config(
@@ -97,8 +96,8 @@ if submit:
 
     site = st.session_state['site']
     conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-    rows = conv.rows
-    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols)
+    feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
+    solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
     st.session_state['wt_pos'] = solution

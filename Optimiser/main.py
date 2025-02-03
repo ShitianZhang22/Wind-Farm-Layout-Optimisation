@@ -11,7 +11,6 @@ import pygad
 from Optimiser.config import *
 import pandas as pd
 # from Optimiser.fitness_pre import fitness_func
-# from Optimiser.fitness import fitness_func
 # import time
 # import cProfile
 
@@ -25,12 +24,15 @@ def on_start(ga):
 def on_generation(ga):
     print("Generation", ga.generations_completed)
 
-def optimisation(wt_number, rows, cols):
+def optimisation(wt_number, rows, cols, feasible_loc=None):
     """
     This is the main function of optimisation. It is called once when the user send an optimisation request.
     First, it prepares some variables used for optimisation.
     Then it creates an Pygad.GA instance and runs the optimisation.
     Finally, it provides the summary for the optimal layout.
+    `wt_number`: an integer of wind turbine numbers.
+    `rows` and `cols`: integers of rows and columns in the grid.
+    `feasible_loc`: a list of feasible locations represented by genes. If it is None, then all positions are regareded feasible.
     """
     global trans_xy
 
@@ -40,15 +42,12 @@ def optimisation(wt_number, rows, cols):
     '''
     Parameter preparation.
     '''
-    # an array can be used in gene_space to manually set all available positions for a turbine
-    gene_space = list(range(rows * cols))
-    restriction = False # whether there are unavailable cells
-    if restriction:
-        unavailable = np.loadtxt(r'data/Unavailable_Cells.txt', dtype='int', delimiter=',', encoding='utf-8')
-        unavailable = np.argwhere(unavailable.reshape(rows * cols))
-        unavailable = unavailable.reshape(unavailable.shape[0])
-        for i in range(unavailable.shape[0]-1, -1, -1):
-            gene_space.pop(unavailable[i])
+
+    if feasible_loc is None:
+        # an array can be used in gene_space to manually set all available positions for a turbine
+        gene_space = list(range(rows * cols))
+    else:
+        gene_space = feasible_loc
 
     '''
     xy position initialisation
