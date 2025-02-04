@@ -36,5 +36,5 @@ def process_wind(path):
 
 
 if __name__ == '__main__':
-    test_data = 'backup/summary-1d.nc'
+    test_data = 'data/summary-1d.nc'
     process_wind(test_data)

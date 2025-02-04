@@ -70,6 +70,6 @@ def process_wind(source, path):
 
 
 if __name__ == '__main__':
-    test_data1 = 'backup/2024Dec.nc'
-    test_data2 = 'backup/summary-1d.nc'
+    test_data1 = 'data/2024Dec.nc'
+    test_data2 = 'data/summary-1d.nc'
     process_wind(test_data1, test_data2)

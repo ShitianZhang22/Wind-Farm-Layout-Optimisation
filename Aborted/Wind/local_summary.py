@@ -45,7 +45,7 @@ def local_sum(source, _lat, _lon):
     dist_sq = np.sum((valid_pos - np.array([_lat, _lon])) ** 2, 1)
     iy_min, ix_min = valid_ind[dist_sq.argmin()]
 
-    # print(iy_min, ix_min)
+    # print(lat[iy_min], lon[ix_min])
 
     result = np.array([speed[iy_min, ix_min, :], frequency[iy_min, ix_min, :]], dtype='float64').T
     file.close()
