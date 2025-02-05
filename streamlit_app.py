@@ -155,27 +155,24 @@ st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_widt
 # The last part of summary
 st.markdown('## Summary')
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
     if len(st.session_state['site_summary']) != 0:
-        st.markdown('- ### Data of wind farm site')
         st.markdown('The estimated Annual Energy Production is')
-        st.markdown('## {:.2f} MWh'.format(st.session_state['site_summary'][0]))
-        st.markdown('with the overall efficiency of')
-        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
+        st.markdown('### {:.2f} MWh'.format(st.session_state['site_summary'][0]))
     else:
         st.markdown('Please run optimisation first!')
 
 with col2:
     if len(st.session_state['site_summary']) != 0:
-        st.markdown('- ### Data of wind turbines')
-        st.dataframe(
-            st.session_state['wt_summary'],
-            hide_index=True,
-            column_config={
-                'Annual Energy Production': st.column_config.NumberColumn(format='%.2f kWh'),
-                'Efficiency': st.column_config.NumberColumn(format='%.2f %%'),
-            },
-            )
+        st.markdown('Equivalent to')
+        st.markdown('### {:.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
+        # st.markdown('')
+
+with col3:
+    if len(st.session_state['site_summary']) != 0:
+        st.markdown('The overall efficiency is')
+        st.markdown('### {:.2%}'.format(st.session_state['site_summary'][1]))
+
 # Show data
 # st.write(st.session_state)
