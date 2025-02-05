@@ -145,8 +145,9 @@ if submit:
 
 # st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
-for pos in st.session_state['wt_pos']:
-    fg.add_child(folium.Marker(pos))
+# add wind turbine icon
+for i in range(len(st.session_state['wt_pos'])):
+    fg.add_child(folium.Marker(st.session_state['wt_pos'][i], tooltip='Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
 # Show map

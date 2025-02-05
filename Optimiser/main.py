@@ -146,11 +146,12 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     wt_summary *= 24 * 365 * 0.3 / 1000
     # print(wt_summary.sum(), efficiency, wt_summary, wt_efficiency)
 
-    wt = pd.DataFrame({
-        'Wind Turbine ID': list(range(1, num_genes + 1)),
-        'Annual Energy Production': wt_summary,
-        'Efficiency': wt_efficiency * 100
-        })
+    # wt = pd.DataFrame({
+    #     'Annual Energy Production': wt_summary,
+    #     'Efficiency': wt_efficiency
+    #     })
+
+    wt = np.array([wt_summary, wt_efficiency], dtype='float64').T
     
     # print(wt)
     
