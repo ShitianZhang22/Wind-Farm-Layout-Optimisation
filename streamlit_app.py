@@ -1,14 +1,14 @@
+import folium.raster_layers
 import streamlit as st
 import folium
-from folium.plugins import MousePosition, Draw
+from folium.plugins import MousePosition, Draw, HeatMap
 from streamlit_folium import st_folium
-import streamlit.components.v1 as components
 import numpy as np
 
 from Optimiser.main import optimisation
 from CRS.crs_init import CRSConvertor
 from Wind.main import wind
-from Land.main import land
+from Land.main import land, feasibility
 
 # Page configuration
 st.set_page_config(
@@ -59,6 +59,8 @@ def initialise_session_state():
         st.session_state['site_summary'] = []
     if 'wt_summary' not in st.session_state:
         st.session_state['wt_summary'] = None
+    if 'optimised' not in st.session_state:
+        st.session_state['optimised'] = False
 
 
 def reset_session_state():
@@ -116,7 +118,7 @@ if submit:
 
 
     reset_session_state()
-    m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
+    # m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
 
     site = st.session_state['site']
 
@@ -133,6 +135,8 @@ if submit:
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
     st.session_state['wt_pos'] = solution
+    
+    st.session_state['optimised'] = True
 
     # save history
     st.session_state['history'] = {
@@ -145,12 +149,36 @@ if submit:
 
 # st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
-for pos in st.session_state['wt_pos']:
-    fg.add_child(folium.Marker(pos))
+ 
+# add wind turbine icon
+for i in range(len(st.session_state['wt_pos'])):
+    temp = st.session_state['wt_pos'][i]
+    # EACH ICON CAN ONLY BE USED ONCE!!!!!
+    icon = folium.features.CustomIcon(
+    'icon/turbine.png',
+    icon_size=(50, 50),
+    icon_anchor=(24, 42),
+    )
+    tooltip = 'Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
+    fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
+st.markdown('The blue box on the map is the bounding box of the wind farm site.')
+# add feasibility layer
+if st.session_state['optimised']:
+    st.markdown('Wind turbine icons show the optimised wind farm layout. Hover on an icon for detailed information.')
+    st.markdown('Shadowed areas on the map indicate infeasible areas.')
+    site = st.session_state['site']
+    rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
+
+    folium.raster_layers.ImageOverlay(
+        image=rgba_img,
+        bounds=f_bounds,
+        opacity=1,
+    ).add_to(m)
+
 # Show map
-st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_width=True)
+st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_width=True, pixelated=True)
 
 # The last part of summary
 st.markdown('## Summary')
@@ -167,7 +195,6 @@ with col2:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('Equivalent to')
         st.markdown('### {:.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
-        # st.markdown('')
 
 with col3:
     if len(st.session_state['site_summary']) != 0:
