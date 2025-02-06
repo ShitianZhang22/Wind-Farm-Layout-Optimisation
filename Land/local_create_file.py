@@ -38,6 +38,7 @@ def process_wind(path, source):
     s_lon[:] = lon[:]
 
     summary.close()
+    file.close()
 
 
 if __name__ == '__main__':

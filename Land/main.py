@@ -40,6 +40,37 @@ def land(source, _loc):
         return gene_space
     
 
+def feasibility(source, area):
+    """
+    This function is for producing raster image of feasibility within the given spatial range
+    `source`: a string indicating the directory of the data
+    `area`: a list of Northern, Western, Southern, Eastern bounds of the site.
+    return: an arraylike image and the spatial bound (2 * 2 list with bot-left and top-right corner)
+    """
+    with netCDF4.Dataset(source, 'r') as file:
+        fea = file.variables['feasible']
+        lat = file.variables['latitude']
+        lon = file.variables['longitude']
+
+        y_range = np.argwhere((lat[:] < area[0]) & (lat[:] > area[2])).T[0]
+        x_range = np.argwhere((lon[:] < area[3]) & (lon[:] > area[1])).T[0]
+
+        # mask has to be removed here, or 'data==0' cannot find anything.
+        data = fea[y_range, x_range].data
+
+        image = np.zeros((len(y_range), len(x_range), 4), dtype=np.uint8)
+        image[data == 1] = [255, 255, 255, 0]
+        image[data == 0] = [0, 0, 0, 50]
+
+        # remove mask
+        _lat = lat[:].tolist()
+        _lon = lon[:].tolist()
+
+        return image, [[_lat[y_range[-1]], _lon[x_range[0]]], [_lat[y_range[0]], _lon[x_range[-1]]]]
+
+        # return np.asarray(data, dtype=np.uint8), [[lat[y_range[-1]], lon[x_range[0]]], [lat[y_range[0]], lon[x_range[-1]]]]
+        
+    
 if __name__ == '__main__':
     test_data = 'data/infeasible.nc'
     test_lat = 55.6745326
