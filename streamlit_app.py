@@ -116,7 +116,7 @@ if submit:
 
 
     reset_session_state()
-    m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
+    # m = folium.Map(location=st.session_state['centre'], zoom_start=st.session_state['zoom'])
 
     site = st.session_state['site']
 
@@ -145,9 +145,18 @@ if submit:
 
 # st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
+ 
 # add wind turbine icon
 for i in range(len(st.session_state['wt_pos'])):
-    fg.add_child(folium.Marker(st.session_state['wt_pos'][i], tooltip='Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])))
+    temp = st.session_state['wt_pos'][i]
+    # EACH ICON CAN ONLY BE USED ONCE!!!!!
+    icon = folium.features.CustomIcon(
+    'icon/turbine.png',
+    icon_size=(50, 50),
+    icon_anchor=(24, 42),
+    )
+    tooltip = 'Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
+    fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
 # Show map
@@ -168,7 +177,6 @@ with col2:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('Equivalent to')
         st.markdown('### {:.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
-        # st.markdown('')
 
 with col3:
     if len(st.session_state['site_summary']) != 0:
