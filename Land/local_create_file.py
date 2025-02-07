@@ -34,8 +34,12 @@ def process_wind(path, source):
         zlib=True, complevel=9, chunksizes=(648, 1296), fill_value=0
         )
 
-    s_lat[:] = lat[:]
+    # the latitude in the data source is from north to south
+    s_lat[:] = np.flip(lat[:])
     s_lon[:] = lon[:]
+
+    print(s_lat[:])
+    print(s_lon[:])
 
     summary.close()
     file.close()
