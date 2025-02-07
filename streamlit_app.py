@@ -163,11 +163,13 @@ for i in range(len(st.session_state['wt_pos'])):
     fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
-st.markdown('The blue box on the map is the bounding box of the wind farm site.')
+st.markdown('**The blue rectangle outlines the wind farm site boundary.**')
+
 # add feasibility layer
 if st.session_state['optimised']:
-    st.markdown('Wind turbine icons show the optimised wind farm layout. Hover on an icon for detailed information.')
-    st.markdown('Shadowed areas on the map indicate infeasible areas.')
+    st.markdown('**Wind turbine icons represent the optimised layout.**')
+    st.markdown('*Hover over an icon to view detailed information about each turbine.*')
+    st.markdown('**Shaded areas on the map highlight infeasible zones** where turbine placement is not possible.')
     site = st.session_state['site']
     rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
 
