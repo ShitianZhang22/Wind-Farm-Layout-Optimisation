@@ -178,6 +178,8 @@ if st.session_state['optimised']:
         bounds=f_bounds,
         opacity=1,
     ).add_to(m)
+else:
+    st.markdown('**Click Submit button to start optimisation!**')
 
 # Show map
 st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_width=True, pixelated=True)
