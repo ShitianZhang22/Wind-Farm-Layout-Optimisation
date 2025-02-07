@@ -19,24 +19,26 @@ def process_wind(path, source):
     # data source
     file = netCDF4.Dataset(source, 'r')
 
-    lat = file.variables['lat']
-    lon = file.variables['lon']
+    # lat = file.variables['lat']
+    # lon = file.variables['lon']
     land = file.variables['lccs_class']
 
     step = 648
 
     # new dataset
-    for i in range(51840, 64800, step):
+    for i in range(0, 64800, step):
         i_list = [i + j for j in range(step)]
-        print(i)
+        flip_list = [64799 - i - j for j in range(step)]
+        print(i_list)
+        print(flip_list)
         summary = netCDF4.Dataset(path, 'a', format='NETCDF4')
 
         # create variables
-        s_lat = summary.variables['latitude']
-        s_lon = summary.variables['longitude']
+        # s_lat = summary.variables['latitude']
+        # s_lon = summary.variables['longitude']
         s_fea = summary.variables['feasible']
 
-        s_fea[i_list, :] = feasibility[land[0, i_list, :] // 10]
+        s_fea[i_list, :] = feasibility[land[0, flip_list, :] // 10]
 
         summary.close()
     file.close()

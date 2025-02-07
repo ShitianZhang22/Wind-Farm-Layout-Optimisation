@@ -1,7 +1,7 @@
 import folium.raster_layers
 import streamlit as st
 import folium
-from folium.plugins import MousePosition, Draw, HeatMap
+from folium.plugins import MousePosition, Draw
 from streamlit_folium import st_folium
 import numpy as np
 
@@ -147,7 +147,6 @@ if submit:
     }
 
 
-# st.markdown('##')
 fg = folium.FeatureGroup(name='Wind_Turbines')
  
 # add wind turbine icon
@@ -176,6 +175,7 @@ if st.session_state['optimised']:
     folium.raster_layers.ImageOverlay(
         image=rgba_img,
         bounds=f_bounds,
+        origin='lower',
         opacity=1,
     ).add_to(m)
 
