@@ -2,7 +2,6 @@ setuptools
 folium
 streamlit_folium
 pygad
-cdsapi
 netCDF4
 pandas
 pyproj
