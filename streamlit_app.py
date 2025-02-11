@@ -167,7 +167,7 @@ st.markdown('**The blue rectangle outlines the wind farm site boundary.**')
 # add feasibility layer
 if st.session_state['optimised']:
     st.markdown('**Wind turbine icons represent the optimised layout.**')
-    st.markdown('*Hover over an icon to view detailed information about each turbine.*')
+    st.markdown('*Hover over a turbine to view energy production.*')
     st.markdown('**Shaded areas on the map highlight infeasible zones** that are not suitable for installing wind turbines.')
     site = st.session_state['site']
     rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
