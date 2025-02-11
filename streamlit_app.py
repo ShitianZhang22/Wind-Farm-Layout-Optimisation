@@ -133,7 +133,10 @@ if submit:
     else:
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
         wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-1d.nc')
-        feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
+        if st.session_state['case'] == 'Whitelee Wind Farm':
+            feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
+        else:
+            feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
     solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]

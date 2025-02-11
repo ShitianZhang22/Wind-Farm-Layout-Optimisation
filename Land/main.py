@@ -8,10 +8,12 @@ In the main function for test, the data is stored locally, but this is not neces
 
 import netCDF4
 import numpy as np
+from Land.case import CASE
 
-def land(source, _loc):
+
+def land(source, _loc, site=None):
     """
-    This function is for getting the historical wind data at a given location.
+    This function is for information of availavle cells and transfer the information into gene space for GA.
     `source`: a string indicating the directory of the data
     `_loc`: an (n, 2) numpy ndarray including the coordinates (deg) of all wind turbines.
     return: a list including all the feasible cells as the format of gene space for GA.
@@ -23,6 +25,9 @@ def land(source, _loc):
         # for d in file.dimensions.items():
         #     print(d)
 
+        if site in CASE.keys(): 
+            return CASE[site]
+
         fea = file.variables['feasible']
         lat = file.variables['latitude']
         lon = file.variables['longitude']
@@ -30,12 +35,14 @@ def land(source, _loc):
         ## find the closest location. No need to deal with empty data.
         gene_space = []
         for i in range(_loc.shape[0]):
-            dist_sq = (lat[:] - _loc[i, 0]) ** 2
-            iy_min = dist_sq.argmin()
-            dist_sq = (lon[:] - _loc[i, 1]) ** 2
-            ix_min = dist_sq.argmin()
+            dist = np.abs(lat[:] - _loc[i, 0])
+            iy_min = dist.argmin()
+            dist = np.abs(lon[:] - _loc[i, 1])
+            ix_min = dist.argmin()
             if fea[iy_min, ix_min]:
                 gene_space.append(i)
+        
+        # print(gene_space)
 
         return gene_space
     
