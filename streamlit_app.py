@@ -89,13 +89,16 @@ draw = Draw(draw_options={
     'marker': False,
     'circlemarker': False,
     })
-draw.add_to(m)
+# This function is temporarily aborted
+# draw.add_to(m)
 
 # The first section of Optimisation Request Form
 st.markdown('## Optimisation Request Form')
 # Add a form for input
 with st.form('config'):
-    st.selectbox('Wind farm site', ('Whitelee Wind Farm', 'User defined area in the map'), key='case')
+    # The function of customise area is temporarily aborted
+    # st.selectbox('Wind farm site', ('Whitelee Wind Farm', 'User defined area in the map'), key='case')
+    st.selectbox('Wind farm site', ('Whitelee Wind Farm',), key='case')
     st.number_input('Wind turbine number', min_value=1, value=215, step=1, key='wt_number')
     submit = st.form_submit_button('Submit')
 
