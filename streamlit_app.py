@@ -158,7 +158,7 @@ for i in range(len(st.session_state['wt_pos'])):
     icon_size=(50, 50),
     icon_anchor=(24, 42),
     )
-    tooltip = 'Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
+    tooltip = 'Annual Energy Production: {:,.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
     fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
@@ -191,14 +191,14 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('The estimated Annual Energy Production is')
-        st.markdown('### {:.2f} MWh'.format(st.session_state['site_summary'][0]))
+        st.markdown('### {:,.2f} MWh'.format(st.session_state['site_summary'][0]))
     else:
         st.markdown('Please run optimisation first!')
 
 with col2:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('Equivalent to')
-        st.markdown('### {:.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
+        st.markdown('### {:,.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
 
 with col3:
     if len(st.session_state['site_summary']) != 0:
