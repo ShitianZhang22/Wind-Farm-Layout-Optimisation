@@ -43,7 +43,7 @@ def compress(source, path, resolution):
                 c_lat = comp.createVariable('latitude', 'float32', ('latitude',), compression='zlib')
                 c_lon = comp.createVariable('longitude', 'float32', ('longitude',), compression='zlib')
                 c_speed = comp.createVariable('speed', 'float32', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 19, 40))
-                c_direction = comp.createVariable('direction', 'float32', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 19, 40))
+                c_direction = comp.createVariable('direction', 'int8', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 19, 40))
 
                 c_time[:] = np.arange(f_time.shape[0])
                 c_lat[:] = np.arange(-90, 90.1, 0.1 * resolution)

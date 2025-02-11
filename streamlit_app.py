@@ -201,7 +201,8 @@ with col1:
 with col2:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('Equivalent to')
-        st.markdown('### {:,.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
+        st.markdown('### {:,.0f} household consumption*'.format(st.session_state['site_summary'][0] // 2.7))
+        st.markdown('*Typical annual household electricity use estimated by Ofgem.')
 
 with col3:
     if len(st.session_state['site_summary']) != 0:
