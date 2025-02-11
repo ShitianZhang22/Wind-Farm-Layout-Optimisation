@@ -4,8 +4,8 @@ Optimiser/test.py
 Optimiser/__pycache__/
 __pycache__/
 trial.py
-Wind/backup/2024Dec.nc
-Wind/backup/2024Nov.nc
 Land/raw/
+wind/compressed05d/
 Wind/raw/
 trial.ipynb
+/windenv

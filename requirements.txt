@@ -2,10 +2,8 @@ setuptools
 folium
 streamlit_folium
 pygad
-cdsapi
 netCDF4
 pandas
-openpyxl
 pyproj
 -e ./Optimiser/
 -e ./Wind/

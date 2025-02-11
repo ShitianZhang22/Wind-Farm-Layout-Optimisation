@@ -89,13 +89,16 @@ draw = Draw(draw_options={
     'marker': False,
     'circlemarker': False,
     })
-draw.add_to(m)
+# This function is temporarily aborted
+# draw.add_to(m)
 
 # The first section of Optimisation Request Form
 st.markdown('## Optimisation Request Form')
 # Add a form for input
 with st.form('config'):
-    st.selectbox('Wind farm site', ('Whitelee Wind Farm', 'User defined area in the map'), key='case')
+    # The function of customise area is temporarily aborted
+    # st.selectbox('Wind farm site', ('Whitelee Wind Farm', 'User defined area in the map'), key='case')
+    st.selectbox('Wind farm site', ('Whitelee Wind Farm',), key='case')
     st.number_input('Wind turbine number', min_value=1, value=215, step=1, key='wt_number')
     submit = st.form_submit_button('Submit')
 
@@ -130,7 +133,10 @@ if submit:
     else:
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
         wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-1d.nc')
-        feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
+        if st.session_state['case'] == 'Whitelee Wind Farm':
+            feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
+        else:
+            feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
     solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
     solution = conv.gene_to_pos(solution)
     st.session_state['site_summary'] = [summary, efficiency]
@@ -158,7 +164,7 @@ for i in range(len(st.session_state['wt_pos'])):
     icon_size=(50, 50),
     icon_anchor=(24, 42),
     )
-    tooltip = 'Annual Energy Production: {:.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
+    tooltip = 'Annual Energy Production: {:,.2f} MWh <br> Efficiency: {:.2%}'.format(st.session_state['wt_summary'][i, 0], st.session_state['wt_summary'][i, 1])
     fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
@@ -167,7 +173,7 @@ st.markdown('**The blue rectangle outlines the wind farm site boundary.**')
 # add feasibility layer
 if st.session_state['optimised']:
     st.markdown('**Wind turbine icons represent the optimised layout.**')
-    st.markdown('*Hover over an icon to view detailed information about each turbine.*')
+    st.markdown('*Hover over a turbine to view energy production.*')
     st.markdown('**Shaded areas on the map highlight infeasible zones** that are not suitable for installing wind turbines.')
     site = st.session_state['site']
     rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
@@ -191,14 +197,15 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('The estimated Annual Energy Production is')
-        st.markdown('### {:.2f} MWh'.format(st.session_state['site_summary'][0]))
+        st.markdown('### {:,.2f} MWh'.format(st.session_state['site_summary'][0]))
     else:
         st.markdown('Please run optimisation first!')
 
 with col2:
     if len(st.session_state['site_summary']) != 0:
         st.markdown('Equivalent to')
-        st.markdown('### {:.0f} household consumption'.format(st.session_state['site_summary'][0] // 2.7))
+        st.markdown('### {:,.0f} household consumption*'.format(st.session_state['site_summary'][0] // 2.7))
+        st.markdown('*Typical annual household electricity use estimated by Ofgem.')
 
 with col3:
     if len(st.session_state['site_summary']) != 0:
