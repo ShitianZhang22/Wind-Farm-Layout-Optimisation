@@ -192,7 +192,7 @@ legend_template = """
 {% macro html(this, kwargs) %}
 <div id='maplegend' class='maplegend' 
     style='position: absolute; z-index: 9999; background-color: rgba(255, 255, 255, 0.7);
-     border-radius: 6px; padding: 10px; font-size: 14px; font-weight: bold; right: 20px; top: 330px;'>   
+     border-radius: 6px; padding: 10px; font-size: 14px; font-weight: bold; right: 20px; top: 300px;'>   
 <div class='legend-scale'>
   <ul class='legend-labels'>
     <li style='font-size: 20px; padding: 10px;'>Legend</li>
