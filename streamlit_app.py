@@ -1,7 +1,9 @@
+import folium.features
 import folium.raster_layers
 import streamlit as st
 import folium
 from folium.plugins import MousePosition, Draw
+from branca.element import Template, MacroElement
 from streamlit_folium import st_folium
 import numpy as np
 
@@ -132,7 +134,7 @@ if submit:
         feasible_cell = st.session_state['history']['feasible_cell']
     else:
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-1d.nc')
+        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-05d.nc')
         if st.session_state['case'] == 'Whitelee Wind Farm':
             feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
         else:
@@ -168,13 +170,9 @@ for i in range(len(st.session_state['wt_pos'])):
     fg.add_child(folium.Marker(location=temp, icon = icon, tooltip=tooltip))
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
-st.markdown('**The blue rectangle outlines the wind farm site boundary.**')
-
 # add feasibility layer
 if st.session_state['optimised']:
-    st.markdown('**Wind turbine icons represent the optimised layout.**')
     st.markdown('*Hover over a turbine to view energy production.*')
-    st.markdown('**Shaded areas on the map highlight infeasible zones** that are not suitable for installing wind turbines.')
     site = st.session_state['site']
     rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
 
@@ -187,8 +185,38 @@ if st.session_state['optimised']:
 else:
     st.markdown('**Click Submit button to start optimisation!**')
 
+
+# Create the legend template as an HTML element
+# Source: https://stackoverflow.com/questions/77931522/how-to-add-a-legend-to-streamlit-folium-map-when-there-is-few-discrete-colors
+legend_template = """
+{% macro html(this, kwargs) %}
+<div id='maplegend' class='maplegend' 
+    style='position: absolute; z-index: 9999; background-color: rgba(255, 255, 255, 0.7);
+     border-radius: 6px; padding: 10px; font-size: 14px; font-weight: bold; right: 20px; top: 300px;'>   
+<div class='legend-scale'>
+  <ul class='legend-labels'>
+    <li style='font-size: 20px; padding: 10px;'>Legend</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/boundary.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Site Boundary</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/infeasible.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Infeasible Area</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Wind Turbine</li>
+  </ul>
+</div>
+</div> 
+<style type='text/css'>
+  .maplegend .legend-scale ul {margin: 0; padding: 0; color: #0f0f0f;}
+  .maplegend .legend-scale ul li {list-style: none; line-height: 18px; margin-bottom: 1.5px;}
+  .maplegend ul.legend-labels li span {float: left; height: 16px; width: 16px; margin-right: 4.5px;}
+</style>
+{% endmacro %}
+"""
+# Add the legend to the map
+macro = MacroElement()
+macro._template = Template(legend_template)
+m.get_root().add_child(macro)
+
 # Show map
 st_folium(m, feature_group_to_add=fg, height=500, key="map1", use_container_width=True, pixelated=True)
+
 
 # The last part of summary
 st.markdown('## Summary')
