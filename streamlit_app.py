@@ -189,47 +189,23 @@ if st.session_state['optimised']:
 else:
     st.markdown('**Click Submit button to start optimisation!**')
 
-# add legend
-# Custom legend HTML
-# legend_html = """
-# <div style="
-#     position: fixed;
-#     bottom: 50px;
-#     left: 50px;
-#     width: 220px;
-#     background-color: white;
-#     border: 2px solid grey;
-#     z-index: 9999;
-#     padding: 10px;
-#     box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-#     font-size: 14px;
-# ">
-#     <b>Map Legend</b><br>
-#     <i style="background: blue; width: 12px; height: 12px; display: inline-block; margin-right: 5px;"></i> Wind Farm Boundary<br>
-#     <img src="icon/turbine.png" style="width: 15px; height: 15px; margin-right: 5px;"> Optimised Turbine<br>
-#     <i style="background: grey; width: 12px; height: 12px; display: inline-block; margin-right: 5px; opacity: 0.5;"></i> Infeasible Area
-# </div>
-# """
-# # Add legend to map
-# m.get_root().html.add_child(Element(legend_html))
-
-# a = FloatImage("https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/turbine.png?raw=true", bottom=10, left=10, width='300px')
-# fg.add_child(a)
 
 # Create the legend template as an HTML element
 legend_template = """
 {% macro html(this, kwargs) %}
 <div id='maplegend' class='maplegend' 
     style='position: absolute; z-index: 9999; background-color: rgba(255, 255, 255, 0.7);
-     border-radius: 6px; padding: 10px; font-size: 10.5px; right: 20px; top: 280px;'>     
-<div class='legend-scale'>
+     border-radius: 6px; padding: 10px; font-size: 12px; font-weight: bold; right: 20px; top: 290px;'>   
+<div class='legend-scale'> 
   <ul class='legend-labels'>
     <li><span style='background: green; opacity: 0.75;'></span>Wind speed <= 55.21</li>
     <li><span style='background: yellow; opacity: 0.75;'></span>55.65 <= Wind speed <= 64.29</li>
     <li><span style='background: orange; opacity: 0.75;'></span>64.50 <= Wind speed <= 75.76</li>
-    <li><span style='background: red; opacity: 0.75;'></span>75.90 <= Wind speed <= 90.56</li>
-    <li><span style='background: black; opacity: 0.3;'></span>Infeasible areas</li>
-    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/turbine.png?raw=true" style="width: 50px; height: 50px; margin-right: 5px;"> Optimised Turbine</li>
+    <li><span style='background: blue; opacity: 0.75;'></span>Site boundary</li>
+    <li><span style='background: black; opacity: 0.2;'></span>Infeasible areas</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;"> Wind Turbine</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;"> Wind Turbine</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;"> Wind Turbine</li>
   </ul>
 </div>
 </div> 
