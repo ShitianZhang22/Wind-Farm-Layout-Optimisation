@@ -2,8 +2,7 @@ import folium.features
 import folium.raster_layers
 import streamlit as st
 import folium
-from folium.plugins import MousePosition, Draw, FloatImage
-from folium import Element
+from folium.plugins import MousePosition, Draw
 from branca.element import Template, MacroElement
 from streamlit_folium import st_folium
 import numpy as np
@@ -221,15 +220,15 @@ else:
 legend_template = """
 {% macro html(this, kwargs) %}
 <div id='maplegend' class='maplegend' 
-    style='position: absolute; z-index: 9999; background-color: rgba(255, 255, 255, 0.5);
-     border-radius: 6px; padding: 10px; font-size: 10.5px; right: 20px; top: 20px;'>     
+    style='position: absolute; z-index: 9999; background-color: rgba(255, 255, 255, 0.7);
+     border-radius: 6px; padding: 10px; font-size: 10.5px; right: 20px; top: 280px;'>     
 <div class='legend-scale'>
   <ul class='legend-labels'>
     <li><span style='background: green; opacity: 0.75;'></span>Wind speed <= 55.21</li>
     <li><span style='background: yellow; opacity: 0.75;'></span>55.65 <= Wind speed <= 64.29</li>
     <li><span style='background: orange; opacity: 0.75;'></span>64.50 <= Wind speed <= 75.76</li>
     <li><span style='background: red; opacity: 0.75;'></span>75.90 <= Wind speed <= 90.56</li>
-    <li><span style='background: purple; opacity: 0.75;'></span>Wind speed >= 91.07</li>
+    <li><span style='background: black; opacity: 0.3;'></span>Infeasible areas</li>
     <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/turbine.png?raw=true" style="width: 50px; height: 50px; margin-right: 5px;"> Optimised Turbine</li>
   </ul>
 </div>
