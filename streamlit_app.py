@@ -171,17 +171,19 @@ for i in range(len(st.session_state['wt_pos'])):
 fg.add_child(folium.Rectangle(st.session_state['site']))
 
 # add feasibility layer
-if st.session_state['optimised']:
-    st.markdown('*Hover over a turbine to view energy production.*')
-    site = st.session_state['site']
-    rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
+st.markdown('*Hover over a turbine to view energy production.*')
+site = st.session_state['site']
+rgba_img, f_bounds = feasibility('Land/data/infeasible.nc', [site[1][0], site[0][1], site[0][0], site[1][1]])
 
-    folium.raster_layers.ImageOverlay(
-        image=rgba_img,
-        bounds=f_bounds,
-        origin='lower',
-        opacity=1,
-    ).add_to(m)
+folium.raster_layers.ImageOverlay(
+    image=rgba_img,
+    bounds=f_bounds,
+    origin='lower',
+    opacity=1,
+).add_to(m)
+
+if st.session_state['optimised']:
+    pass
 else:
     st.markdown('**Click Submit button to start optimisation!**')
 
