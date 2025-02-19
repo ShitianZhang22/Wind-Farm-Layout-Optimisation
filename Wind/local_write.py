@@ -15,10 +15,10 @@ def process_wind(source, path):
     `path`: the file path for storing the data.
     """
 
-    # The data is to be written every 19 lines (note that the original data is from north to south)
-    step = 19
+    # The data is to be written every several lines (note that the original data is from north to south)
+    step = 180
 
-    with netCDF4.Dataset(path, 'a', format='NETCDF4') as summary:
+    with netCDF4.Dataset(path, 'r', format='NETCDF4') as summary:
         lat_len = len(summary.variables['latitude'][:])
         lon_len = len(summary.variables['longitude'][:])
         # print(lon_len)
@@ -81,7 +81,7 @@ def process_wind(source, path):
 
 
 if __name__ == '__main__':
-    test_data1 = 'compressed05d/'
-    test_data2 = 'raw/summary-05d.nc'
+    test_data1 = 'raw/'
+    test_data2 = 'raw/summary-01d.nc'
     compressed_folder = 'compressed'
     process_wind(test_data1, test_data2)

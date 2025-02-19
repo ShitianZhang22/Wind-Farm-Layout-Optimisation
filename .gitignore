@@ -5,6 +5,7 @@ Optimiser/__pycache__/
 __pycache__/
 trial.py
 Land/raw/
+wind/compressed01d/
 wind/compressed05d/
 Wind/raw/
 trial.ipynb

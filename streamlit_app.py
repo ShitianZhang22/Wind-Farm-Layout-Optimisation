@@ -134,7 +134,7 @@ if submit:
         feasible_cell = st.session_state['history']['feasible_cell']
     else:
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-05d.nc')
+        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-05df.nc')
         if st.session_state['case'] == 'Whitelee Wind Farm':
             feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
         else:
@@ -196,9 +196,9 @@ legend_template = """
 <div class='legend-scale'>
   <ul class='legend-labels'>
     <li style='font-size: 20px; padding: 10px;'>Legend</li>
-    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/boundary.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Site Boundary</li>
-    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/infeasible.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Infeasible Area</li>
-    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/update/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Wind Turbine</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/boundary.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Site Boundary</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/infeasible.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Infeasible Area</li>
+    <li><img src="https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/icon/turbine-small.png?raw=true" style="width: 30px; height: 30px; margin-right: 5px;">Wind Turbine</li>
   </ul>
 </div>
 </div> 

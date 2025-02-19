@@ -44,27 +44,8 @@ def local_sum(source, _lat, _lon):
     lat = file.variables['latitude']
     lon = file.variables['longitude']
 
-    # print(speed[:].shape)
-
-    '''
-    There is a problem with the mask. If there is no masked area in the requested region,
-    the downloaded data will not have a element-wise mask, but only a single False.
-    This will make the following np.argwhere return [].
-    '''
-    valid_ind = np.argwhere(speed[:, :, 0].mask == False)
-    if valid_ind.shape[1] == 0:
-        valid_ind = np.zeros((lat.shape[0], lon.shape[0], 2), dtype='int32')
-        for i in range(lat.shape[0]):
-            valid_ind[i, :, 0] = i
-        for j in range(lon.shape[0]):
-            valid_ind[:, j, 1] = j
-        valid_ind = valid_ind.reshape((lat.shape[0] * lon.shape[0], 2))
-        # converting the indices of the original data to coordinates
-    valid_pos = np.array([lat[valid_ind[:, 0]], lon[valid_ind[:, 1]]], dtype='float64').T
-    # print(valid_pos)
-
-    dist_sq = np.sum((valid_pos - np.array([_lat, _lon])) ** 2, 1)
-    iy_min, ix_min = valid_ind[dist_sq.argmin()]
+    iy_min = np.argmin(np.abs(lat[:] - _lat))
+    ix_min = np.argmin(np.abs(lon[:] - _lon))
 
     print('Using wind data at:')
     print(lat[iy_min], lon[ix_min] - 360)
