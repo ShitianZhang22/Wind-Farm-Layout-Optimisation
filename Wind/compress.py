@@ -25,7 +25,7 @@ def compress(source, path, resolution):
         '202412.nc',
         ]
     # file_list = ['202401.nc']
-    mesh = np.array(range(0, 3600, resolution), dtype='int32')
+    # mesh = np.array(range(0, 3600, resolution), dtype='int32')
 
     for i in file_list:
         # load raw file
@@ -42,8 +42,8 @@ def compress(source, path, resolution):
                 c_time = comp.createVariable('time', 'int8', ('time',), compression='zlib')
                 c_lat = comp.createVariable('latitude', 'float32', ('latitude',), compression='zlib')
                 c_lon = comp.createVariable('longitude', 'float32', ('longitude',), compression='zlib')
-                c_speed = comp.createVariable('speed', 'float32', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 19, 40))
-                c_direction = comp.createVariable('direction', 'int8', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 19, 40))
+                c_speed = comp.createVariable('speed', 'float32', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 18, 360))
+                c_direction = comp.createVariable('direction', 'int8', ('time', 'latitude', 'longitude',), zlib=True, complevel=9, chunksizes=(100, 18, 360))
 
                 c_time[:] = np.arange(f_time.shape[0])
                 c_lat[:] = np.arange(-90, 90.1, 0.1 * resolution)
@@ -52,8 +52,10 @@ def compress(source, path, resolution):
                 for j in range(c_lat.shape[0]):
                     print('{}: {}'.format(i, j))
                     # from south to north
-                    southward = -v[:, mesh[1800 // resolution - j], mesh]
-                    westward = -u[:, mesh[1800 // resolution - j], mesh]
+                    # southward = -v[:, mesh[1800 // resolution - j], mesh]
+                    # westward = -u[:, mesh[1800 // resolution - j], mesh]
+                    southward = -v[:, 1800 - j, :]
+                    westward = -u[:, 1800 - j, :]
                     
                     speed = (southward ** 2 + westward ** 2) ** 0.5
                     direction = np.arcsin(westward / speed)
@@ -67,5 +69,5 @@ def compress(source, path, resolution):
                 
 if __name__ == '__main__':
     test_data1 = 'raw/'
-    compressed_folder = 'compressed05d/'
-    compress(test_data1, compressed_folder, 5)
+    compressed_folder = 'compressed01d/'
+    compress(test_data1, compressed_folder, 1)
