@@ -18,7 +18,7 @@ def process_wind(source, path):
     # The data is to be written every 19 lines (note that the original data is from north to south)
     step = 19
 
-    with netCDF4.Dataset(path, 'a', format='NETCDF4') as summary:
+    with netCDF4.Dataset(path, 'r', format='NETCDF4') as summary:
         lat_len = len(summary.variables['latitude'][:])
         lon_len = len(summary.variables['longitude'][:])
         # print(lon_len)
