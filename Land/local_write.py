@@ -14,7 +14,8 @@ def process_wind(path, source):
     """
 
     # feasibility
-    feasibility = np.array([0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0], dtype='int')
+    # feasibility = np.array([0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0], dtype='int')  # This is the previous version.
+    feasibility = np.array([0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0], dtype='int')  # This is the new version.
 
     # data source
     file = netCDF4.Dataset(source, 'r')
@@ -45,7 +46,7 @@ def process_wind(path, source):
 
 
 if __name__ == '__main__':
-    test_data = 'data/infeasible.nc'
+    test_data = 'data/infeasible2.nc'
     s = 'raw/C3S-LC-L4-LCCS-Map-300m-P1Y-2022-v2.1.1.nc'
     process_wind(test_data, s)
  

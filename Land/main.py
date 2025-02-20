@@ -19,14 +19,14 @@ def land(source, _loc, site=None):
     return: a list including all the feasible cells as the format of gene space for GA.
     """
 
+    if site in CASE.keys(): 
+            return CASE[site]
+    
     with netCDF4.Dataset(source, 'r') as file:
 
         # print(file.variables.keys())
         # for d in file.dimensions.items():
         #     print(d)
-
-        if site in CASE.keys(): 
-            return CASE[site]
 
         fea = file.variables['feasible']
         lat = file.variables['latitude']

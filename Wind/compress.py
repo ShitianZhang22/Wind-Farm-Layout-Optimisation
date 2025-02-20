@@ -11,18 +11,18 @@ def compress(source, path, resolution):
     """
     # read the data source
     file_list = [
-        '202401.nc',
-        '202402.nc',
+        # '202401.nc',
+        # '202402.nc',
         '202403.nc',
-        '202404.nc',
-        '202405.nc',
-        '202406.nc',
-        '202407.nc',
-        '202408.nc',
-        '202409.nc',
-        '202410.nc',
-        '202411.nc',
-        '202412.nc',
+        # '202404.nc',
+        # '202405.nc',
+        # '202406.nc',
+        # '202407.nc',
+        # '202408.nc',
+        # '202409.nc',
+        # '202410.nc',
+        # '202411.nc',
+        # '202412.nc',
         ]
     # file_list = ['202401.nc']
     # mesh = np.array(range(0, 3600, resolution), dtype='int32')
