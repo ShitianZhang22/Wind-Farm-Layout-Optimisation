@@ -65,6 +65,9 @@ def feasibility(source, area):
         y_range = buffer(y_range, 0, lat.shape[0])
         x_range = buffer(x_range, 0, lon.shape[0])
 
+        # print(y_range)
+        # print(x_range)
+
         # mask has to be removed here, or 'data==0' cannot find anything.
         data = fea[y_range, x_range].data
 
