@@ -27,6 +27,7 @@ def process_wind(path, source):
     step = 648
 
     # new dataset
+    # for i in range(0, 64800, step):
     for i in range(0, 64800, step):
         i_list = [i + j for j in range(step)]
         flip_list = [64799 - i - j for j in range(step)]

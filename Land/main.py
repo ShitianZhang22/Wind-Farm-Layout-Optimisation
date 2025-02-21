@@ -62,6 +62,9 @@ def feasibility(source, area):
         y_range = np.argwhere((lat[:] < area[0]) & (lat[:] > area[2])).T[0]
         x_range = np.argwhere((lon[:] < area[3]) & (lon[:] > area[1])).T[0]
 
+        y_range = buffer(y_range, 0, lat.shape[0])
+        x_range = buffer(x_range, 0, lon.shape[0])
+
         # mask has to be removed here, or 'data==0' cannot find anything.
         data = fea[y_range, x_range].data
 
@@ -76,7 +79,22 @@ def feasibility(source, area):
         return image, [[_lat[y_range[-1]], _lon[x_range[0]]], [_lat[y_range[0]], _lon[x_range[-1]]]]
 
         # return np.asarray(data, dtype=np.uint8), [[lat[y_range[-1]], lon[x_range[0]]], [lat[y_range[0]], lon[x_range[-1]]]]
-        
+
+
+def buffer(origin, lower, upper):
+    """
+    This function is to extend one element at the two ends of a list
+    `origin`: an increasingly sorted numpy ndarray of inegers including the original data.
+    `lower`: an integer of the lower bounds of the possible values.
+    `upper`: an integer of the upper bounds of the possible values. 
+    """
+    origin = origin.tolist()
+    if origin[0] > lower:
+        origin.insert(0, origin[0] - 1)
+    if origin[-1] < upper:
+        origin.append(origin[-1] + 1)
+    origin = np.array(origin, dtype='int32')
+    return origin
     
 if __name__ == '__main__':
     test_data = 'data/infeasible.nc'
