@@ -89,9 +89,9 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     xy = xy.transpose()
 
     # trans_matrix is for rotating the coordinates to fit different wind directions.
-    trans_matrix = np.zeros((len(theta), 2, 2), dtype='float64')
-    trans_xy = np.zeros((len(theta), rows * cols, 2), dtype='float64')
-    for i in range(len(theta)):
+    trans_matrix = np.zeros((len(theta) // 2, 2, 2), dtype='float64')
+    trans_xy = np.zeros((len(theta) // 2, rows * cols, 2), dtype='float64')
+    for i in range(len(theta) // 2):
         trans_matrix[i] = np.array(
             [[np.cos(theta[i]), -np.sin(theta[i])],
             [np.sin(theta[i]), np.cos(theta[i])]],
@@ -142,17 +142,20 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     num_genes = len(solution)
     wt_summary = np.zeros((num_genes,), dtype='float64')
     ideal_power = 0  # the ideal power of a wind turbine (kW)
-    for ind_t in range(len(theta)):
-        # need an extra transpose. the indices will auto trans once
+    for ind_t in range(len(theta) // 2):
         trans_xy_position = trans_xy[ind_t, solution, :]
 
-        speed_deficiency = wake(trans_xy_position, num_genes)
+        speed_deficiency0, speed_deficiency1 = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
+        actual_velocity = (1 - speed_deficiency0) * _wind_data[ind_t, 0]
         lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
         wt_summary += lp_power * _wind_data[ind_t, 1]  # the weight of wind frequency at a given direction
-        
         ideal_power += layout_power([_wind_data[ind_t, 0]], 1)[0] * _wind_data[ind_t, 1]
+
+        actual_velocity = (1 - speed_deficiency1) * _wind_data[ind_t + 4, 0]
+        lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
+        wt_summary += lp_power * _wind_data[ind_t + 4, 1]  # the weight of wind frequency at a given direction
+        ideal_power += layout_power([_wind_data[ind_t + 4, 0]], 1)[0] * _wind_data[ind_t + 4, 1]
     
     if ideal_power != 0:  # avoid the scenario of dividing zero
         wt_efficiency = wt_summary / ideal_power
@@ -183,16 +186,20 @@ Below is the part of fitness function.
 def fitness_func(ga_instance, solution, solution_idx):
     num_genes = ga_instance.num_genes
     fitness = 0  # a specific layout power accumulate
-    for ind_t in range(len(theta)):
-        # need an extra transpose. the indices will auto trans once
+    for ind_t in range(len(theta) // 2):
         trans_xy_position = trans_xy[ind_t, solution, :]
         # print(trans_xy_position.shape)
 
-        speed_deficiency = wake(trans_xy_position, num_genes)
+        speed_deficiency0, speed_deficiency1 = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
-        lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
+        # total power of a specific layout under a wind direction
+        actual_velocity = (1 - speed_deficiency0) * _wind_data[ind_t, 0]
+        lp_power = layout_power(actual_velocity, num_genes)
         fitness += lp_power.sum() * _wind_data[ind_t, 1]
+        # calculation for the opposite wind direction
+        actual_velocity = (1 - speed_deficiency1) * _wind_data[ind_t + 4, 0]
+        lp_power = layout_power(actual_velocity, num_genes)
+        fitness += lp_power.sum() * _wind_data[ind_t + 4, 1]
     return fitness
 
 
@@ -202,14 +209,17 @@ def wake(trans_xy_position, n):
     """
     # y value increasingly sort
     sorted_index = np.argsort(trans_xy_position[:, 1])
-    wake_deficiency = np.zeros(n, dtype='float64')
+    wake_deficiency0 = np.zeros(n, dtype='float64')
+    wake_deficiency1 = np.zeros(n, dtype='float64')
     for j in range(n):
         for k in range(j):
             dx = np.absolute(trans_xy_position[sorted_index[j], 0] - trans_xy_position[sorted_index[k], 0])
             dy = np.absolute(trans_xy_position[sorted_index[j], 1] - trans_xy_position[sorted_index[k], 1])
             d = cal_deficiency(dx=dx, dy=dy)
-            wake_deficiency[sorted_index[k]] += d ** 2
-    return np.sqrt(wake_deficiency)
+            # calculate the wake deficiency in two opposite directions at the same time.
+            wake_deficiency0[sorted_index[k]] += d ** 2
+            wake_deficiency1[sorted_index[j]] += d ** 2
+    return np.sqrt(wake_deficiency0), np.sqrt(wake_deficiency1)
 
 
 def cal_deficiency(dx, dy):
