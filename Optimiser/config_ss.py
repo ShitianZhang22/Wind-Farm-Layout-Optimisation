@@ -21,33 +21,27 @@ rotor_radius = 77.0 / 2
 hyperparameters for GA
 '''
 
-num_generations = 5
-# num_generations = 1000
+num_generations = 1000
 
-sol_per_pop = 10
-# select_rate = 0.3
-# num_parents_mating = int(sol_per_pop * select_rate)
-num_parents_mating = sol_per_pop
+sol_per_pop = 3
+num_parents_mating = sol_per_pop - 1
 
 cell_width = 77.0 * 2  # unit : m
 
-parent_selection_type = 'rws'
-keep_parents = 0
+parent_selection_type = 'sss'
+keep_parents = -1
 
-elite_rate = 0.1
-keep_elitism = int(sol_per_pop * elite_rate)
-# keep_elitism = 0
+keep_elitism = 0
 
 crossover_type = 'single_point'
-crossover_probability = 0.3  # this is the selection rate for crossover
-# crossover_probability = 1
+crossover_probability = 1
 
 mutation_type = 'random'
 mutation_probability = 0.01  # this is the mutation rate but applies to gene
 mutation_by_replacement = True
 
-# stop_criteria = None
-stop_criteria = 'saturate_20'
+stop_criteria = None
+# stop_criteria = 'saturate_50'
 
 parallel_processing = None
 # parallel_processing = ['process', 10]

@@ -9,23 +9,40 @@ config.py
 
 import pygad
 from Optimiser.config import *
-import pandas as pd
+# from Optimiser.config_ss import *  # This is the version for steady-state selection
 # from Optimiser.fitness_pre import fitness_func
-# import time
+import time
 # import cProfile
-
-# t = time.time()
 
 # locally define a variable for storing the wind data
 _wind_data = None
 
 
 def on_start(ga):
-    print("Initial population\n", ga.initial_population)
+    global t
+    global log
+    t = time.time()
+    log = []
+    # print("Initial population\n", ga.initial_population)
 
  
 def on_generation(ga):
-    print("Generation", ga.generations_completed)
+    """
+    This function is for recording the time cost of each generation.
+    """
+    global log
+    print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
+    log.append([time.time() - t, ga.best_solutions_fitness[-1]])
+    # print(ga.population)
+
+
+def on_stop(ga, last_fit):
+    """
+    This function is for saving a log including the running time and fitness value of each generation.
+    """
+    _log = np.array(log, dtype='float64')
+    np.savetxt('log/log.csv', _log, fmt='%f', delimiter=',', encoding='utf-8')
+
 
 def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     """
@@ -71,14 +88,15 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     xy = xy * cell_width + cell_width / 2
     xy = xy.transpose()
 
-    trans_matrix = np.zeros((len(theta), 2, 2), dtype='float64')
-    trans_xy = np.zeros((len(theta), 2, rows * cols), dtype='float64')
-    for i in range(len(theta)):
+    # trans_matrix is for rotating the coordinates to fit different wind directions.
+    trans_matrix = np.zeros((len(theta) // 2, 2, 2), dtype='float64')
+    trans_xy = np.zeros((len(theta) // 2, rows * cols, 2), dtype='float64')
+    for i in range(len(theta) // 2):
         trans_matrix[i] = np.array(
             [[np.cos(theta[i]), -np.sin(theta[i])],
             [np.sin(theta[i]), np.cos(theta[i])]],
             dtype='float64')
-        trans_xy[i] = np.matmul(trans_matrix[i], xy)
+        trans_xy[i] = np.matmul(trans_matrix[i], xy).transpose()
     
     '''
     Optimisation.
@@ -100,13 +118,15 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
                            mutation_probability=mutation_probability,
                            mutation_by_replacement=mutation_by_replacement,
                            gene_space=gene_space,
-                           on_start=None,
+                           on_start=on_start,
                            on_generation=on_generation,
-                           suppress_warnings=True,
+                           on_stop=on_stop,
+                           suppress_warnings=False,
                            allow_duplicate_genes=False,
                            stop_criteria=stop_criteria,
                            parallel_processing=parallel_processing,
                            random_seed=random_seed,
+                           save_solutions=True,
                            )
     ga_instance.run()
     solution, solution_fitness, solution_idx = ga_instance.best_solution()
@@ -122,17 +142,20 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     num_genes = len(solution)
     wt_summary = np.zeros((num_genes,), dtype='float64')
     ideal_power = 0  # the ideal power of a wind turbine (kW)
-    for ind_t in range(len(theta)):
-        # need an extra transpose. the indices will auto trans once
-        trans_xy_position = trans_xy[ind_t, :, solution].transpose()
+    for ind_t in range(len(theta) // 2):
+        trans_xy_position = trans_xy[ind_t, solution, :]
 
-        speed_deficiency = wake(trans_xy_position, num_genes)
+        speed_deficiency0, speed_deficiency1 = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
+        actual_velocity = (1 - speed_deficiency0) * _wind_data[ind_t, 0]
         lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
         wt_summary += lp_power * _wind_data[ind_t, 1]  # the weight of wind frequency at a given direction
-        
         ideal_power += layout_power([_wind_data[ind_t, 0]], 1)[0] * _wind_data[ind_t, 1]
+
+        actual_velocity = (1 - speed_deficiency1) * _wind_data[ind_t + 4, 0]
+        lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
+        wt_summary += lp_power * _wind_data[ind_t + 4, 1]  # the weight of wind frequency at a given direction
+        ideal_power += layout_power([_wind_data[ind_t + 4, 0]], 1)[0] * _wind_data[ind_t + 4, 1]
     
     if ideal_power != 0:  # avoid the scenario of dividing zero
         wt_efficiency = wt_summary / ideal_power
@@ -163,15 +186,20 @@ Below is the part of fitness function.
 def fitness_func(ga_instance, solution, solution_idx):
     num_genes = ga_instance.num_genes
     fitness = 0  # a specific layout power accumulate
-    for ind_t in range(len(theta)):
-        # need an extra transpose. the indices will auto trans once
-        trans_xy_position = trans_xy[ind_t, :, solution].transpose()
+    for ind_t in range(len(theta) // 2):
+        trans_xy_position = trans_xy[ind_t, solution, :]
+        # print(trans_xy_position.shape)
 
-        speed_deficiency = wake(trans_xy_position, num_genes)
+        speed_deficiency0, speed_deficiency1 = wake(trans_xy_position, num_genes)
 
-        actual_velocity = (1 - speed_deficiency) * _wind_data[ind_t, 0]
-        lp_power = layout_power(actual_velocity, num_genes)  # total power of a specific layout specific wind speed specific theta
+        # total power of a specific layout under a wind direction
+        actual_velocity = (1 - speed_deficiency0) * _wind_data[ind_t, 0]
+        lp_power = layout_power(actual_velocity, num_genes)
         fitness += lp_power.sum() * _wind_data[ind_t, 1]
+        # calculation for the opposite wind direction
+        actual_velocity = (1 - speed_deficiency1) * _wind_data[ind_t + 4, 0]
+        lp_power = layout_power(actual_velocity, num_genes)
+        fitness += lp_power.sum() * _wind_data[ind_t + 4, 1]
     return fitness
 
 
@@ -180,15 +208,18 @@ def wake(trans_xy_position, n):
     This function is used by fitness_func().
     """
     # y value increasingly sort
-    sorted_index = np.argsort(trans_xy_position[1, :])
-    wake_deficiency = np.zeros(n, dtype='float64')
+    sorted_index = np.argsort(trans_xy_position[:, 1])
+    wake_deficiency0 = np.zeros(n, dtype='float64')
+    wake_deficiency1 = np.zeros(n, dtype='float64')
     for j in range(n):
         for k in range(j):
-            dx = np.absolute(trans_xy_position[0, sorted_index[j]] - trans_xy_position[0, sorted_index[k]])
-            dy = np.absolute(trans_xy_position[1, sorted_index[j]] - trans_xy_position[1, sorted_index[k]])
+            dx = np.absolute(trans_xy_position[sorted_index[j], 0] - trans_xy_position[sorted_index[k], 0])
+            dy = np.absolute(trans_xy_position[sorted_index[j], 1] - trans_xy_position[sorted_index[k], 1])
             d = cal_deficiency(dx=dx, dy=dy)
-            wake_deficiency[sorted_index[k]] += d ** 2
-    return np.sqrt(wake_deficiency)
+            # calculate the wake deficiency in two opposite directions at the same time.
+            wake_deficiency0[sorted_index[k]] += d ** 2
+            wake_deficiency1[sorted_index[j]] += d ** 2
+    return np.sqrt(wake_deficiency0), np.sqrt(wake_deficiency1)
 
 
 def cal_deficiency(dx, dy):
