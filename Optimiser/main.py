@@ -9,23 +9,34 @@ config.py
 
 import pygad
 from Optimiser.config import *
-import pandas as pd
+# from Optimiser.config_ss import *  # This is the version for steady-state selection
 # from Optimiser.fitness_pre import fitness_func
-# import time
+import time
 # import cProfile
 
-# t = time.time()
+t = time.time()
 
 # locally define a variable for storing the wind data
 _wind_data = None
 
+log = []
 
 def on_start(ga):
     print("Initial population\n", ga.initial_population)
 
  
 def on_generation(ga):
-    print("Generation", ga.generations_completed)
+    global log
+    print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
+    log.append([time.time() - t, ga.best_solutions_fitness[-1]])
+    # print(ga.population)
+
+
+def on_stop(ga, last_fit):
+    global log
+    log = np.array(log, dtype='float64')
+    np.savetxt('log/log.csv', log, fmt='%f', delimiter=',', encoding='utf-8')
+
 
 def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     """
@@ -102,11 +113,13 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
                            gene_space=gene_space,
                            on_start=None,
                            on_generation=on_generation,
-                           suppress_warnings=True,
+                           on_stop=on_stop,
+                           suppress_warnings=False,
                            allow_duplicate_genes=False,
                            stop_criteria=stop_criteria,
                            parallel_processing=parallel_processing,
                            random_seed=random_seed,
+                           save_solutions=True,
                            )
     ga_instance.run()
     solution, solution_fitness, solution_idx = ga_instance.best_solution()
