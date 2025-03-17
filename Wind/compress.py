@@ -12,13 +12,13 @@ def compress(source, path, resolution):
     # read the data source
     file_list = [
         # '202401.nc',
-        # '202402.nc',
+        '202402.nc',
         # '202403.nc',
         # '202404.nc',
         # '202405.nc',
         # '202406.nc',
         # '202407.nc',
-        '202408.nc',
+        # '202408.nc',
         # '202409.nc',
         # '202410.nc',
         # '202411.nc',
@@ -58,13 +58,13 @@ def compress(source, path, resolution):
                     westward = -u[:, 1800 - j, :]
                     
                     speed = (southward ** 2 + westward ** 2) ** 0.5
-                    direction = np.arcsin(westward / speed)
-                    mask = southward < 0
-                    direction[mask] = np.pi - direction[mask]
+                    direction = np.arccos(southward / speed) / np.pi
+                    mask = westward[:] < 0
+                    direction[mask] = 2 - direction[mask]
 
                     # categorising the wind into 8 directions
                     c_speed[:, j, :] = speed[:]
-                    c_direction[:, j, :] = (direction[:] + np.pi / 8) * 4 // np.pi
+                    c_direction[:, j, :] = np.floor((direction[:] * 4 + 0.5))
 
                 
 if __name__ == '__main__':
