@@ -48,7 +48,7 @@ def local_sum(source, _lat, _lon):
     ix_min = np.argmin(np.abs(lon[:] - _lon))
 
     print('Using wind data at:')
-    # print(lat[iy_min], lon[ix_min] - 360)
+    print(lat[iy_min], lon[ix_min] - 360)
     print(iy_min, ix_min)
 
     result = np.array([speed[iy_min, ix_min, :], frequency[iy_min, ix_min, :]], dtype='float64').T

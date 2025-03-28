@@ -29,6 +29,7 @@ def fill(source, path):
             # Find the non-zero wind data positions as grid indices.
             valid_ind = np.argwhere(np.sum(speed0[:], axis=2) != 0)
             invalid_ind = np.argwhere(np.sum(speed[:], axis=2) == 0)
+            # print(invalid_ind.shape)
             # print(invalid_ind)
         
             # for ind in invalid_ind[invalid_ind[:, 0] < 1700]:

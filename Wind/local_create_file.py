@@ -1,12 +1,13 @@
 """
 This file is for creating a netCDF4 file to process and store the annual digest to a local file.
+The last step is compress.py (run both functions).
 The next step is in local_write.py.
 """
 
 import netCDF4
 import numpy as np
 
-def process_wind(path):
+def create_wind(path):
     """
     This function is for creating a file for writing annual digest.
     `path`: the file path for storing the data.
@@ -35,7 +36,7 @@ def process_wind(path):
     summary.close()
 
 
-def process_wind2(path):
+def create_wind2(path):
     """
     This function creates a temporary file including the sum and number of wind records at each direction.
     `path`: the file path for storing the data.
@@ -67,6 +68,6 @@ def process_wind2(path):
 
 if __name__ == '__main__':
     test_data = 'raw/summary-01d.nc'
-    process_wind(test_data)
-    # test_data2 = 'raw/summary-01d-temp.nc'
-    # process_wind2(test_data2)
+    create_wind(test_data)
+    test_data2 = 'raw/summary-01d-temp.nc'
+    create_wind2(test_data2)
