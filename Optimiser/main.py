@@ -21,19 +21,28 @@ _wind_data = None
 def on_start(ga):
     global t
     global log
+    global best_layout
+    global best_fitness
     t = time.time()
     log = []
+    best_fitness = 0
+    best_layout= []
     # print("Initial population\n", ga.initial_population)
 
  
 def on_generation(ga):
     """
-    This function is for recording the time cost of each generation.
+    This function is for recording the time cost of each generation and plotting fitness curve.
     """
-    global log
+    # global log
     print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
-    log.append([time.time() - t, ga.best_solutions_fitness[-1]])
-    # print(ga.population)
+    # log.append([time.time() - t, ga.best_solutions_fitness[-1]])
+
+    # The following part is for Steady-State version, which has too many generations.
+    if ga.generations_completed % 10 == 0:
+        global log
+        print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
+        log.append([time.time() - t, ga.best_solutions_fitness[-1]])
 
 
 def on_stop(ga, last_fit):
@@ -126,11 +135,14 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
                            stop_criteria=stop_criteria,
                            parallel_processing=parallel_processing,
                            random_seed=random_seed,
-                           save_solutions=True,
+                           save_solutions=save_solutions,
+                           save_best_solutions=True,
                            )
     ga_instance.run()
-    solution, solution_fitness, solution_idx = ga_instance.best_solution()
-    print("The best solution :\n {solution}".format(solution=solution))
+    # The next line is the best solution in the last generation, which may not be historically best.
+    # solution, solution_fitness, solution_idx = ga_instance.best_solution()
+    solution = ga_instance.best_solutions[ga_instance.best_solution_generation]
+    print("The best solution :\n {}".format(solution))
     # print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
     # print(time.time() - t)
     # ga_instance.plot_fitness()
@@ -258,3 +270,4 @@ if __name__ == '__main__':
     # cProfile.run('ga_instance.run()')
     a = optimisation([3349, 2685, 3663, 896, 2268, 4090, 266, 3303, 1824, 3428, 964, 163, 2391, 1111, 738, 1044, 3098, 2460, 1804, 2833])
     print(a)
+ 

@@ -1,5 +1,6 @@
 """
 This is the configuration file and contains most of the hyperparameters.
+This set of configuration is for Steady-State GA. It will converge quickly and rely on mutation to exploit to better results. Therefore, its fitness value is a logarithm function of iterations and will not converge.
 """
 
 import os
@@ -29,7 +30,8 @@ num_parents_mating = sol_per_pop - 1
 cell_width = 77.0 * 2  # unit : m
 
 parent_selection_type = 'sss'
-keep_parents = -1
+# keep_parents = -1
+keep_parents = 0
 
 keep_elitism = 0
 
@@ -41,7 +43,13 @@ mutation_probability = 0.01  # this is the mutation rate but applies to gene
 mutation_by_replacement = True
 
 stop_criteria = None
-# stop_criteria = 'saturate_50'
+# stop_criteria = 'saturate_200'
+
+'''
+processing
+'''
+
+save_solutions = True
 
 parallel_processing = None
 # parallel_processing = ['process', 10]
