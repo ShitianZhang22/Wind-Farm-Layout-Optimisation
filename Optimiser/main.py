@@ -35,7 +35,7 @@ def on_generation(ga):
     This function is for recording the time cost of each generation and plotting fitness curve.
     """
     # global log
-    print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
+    # print("Generation {}: time cost: {:.1f}; fitness:{:.0f}".format(ga.generations_completed, time.time() - t, ga.best_solutions_fitness[-1]))
     # log.append([time.time() - t, ga.best_solutions_fitness[-1]])
 
     # The following part is for Steady-State version, which has too many generations.
@@ -142,7 +142,7 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     # The next line is the best solution in the last generation, which may not be historically best.
     # solution, solution_fitness, solution_idx = ga_instance.best_solution()
     solution = ga_instance.best_solutions[ga_instance.best_solution_generation]
-    print("The best solution :\n {}".format(solution))
+    print("The best solution :\n {}".format(solution.tolist()))
     # print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
     # print(time.time() - t)
     # ga_instance.plot_fitness()
@@ -178,7 +178,8 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     The power prediction is not correct at the moment.
     Unit: MWh
     '''
-    wt_summary *= 24 * 365 * 0.3 / 1000
+    # wt_summary *= 24 * 365 * 0.3 / 1000
+    wt_summary *= 24 * 365 * 56 / 1000
     # print(wt_summary.sum(), efficiency, wt_summary, wt_efficiency)
 
     # wt = pd.DataFrame({
