@@ -8,8 +8,8 @@ config.py
 """
 
 import pygad
-# from Optimiser.config import *
-from Optimiser.config_ss import *  # This is the version for steady-state selection
+from Optimiser.config import *
+# from Optimiser.config_ss import *  # This is the version for steady-state selection
 # from Optimiser.fitness_pre import fitness_func
 import time
 # import cProfile
