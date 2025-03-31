@@ -15,7 +15,7 @@ theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi
 hub_height = 80.0  # unit (m)
 surface_roughness = 0.25 * 0.001
 entrainment_const = 0.5 / np.log(hub_height / surface_roughness)
-rotor_radius = 77.0 / 2
+rotor_radius = 93.0 / 2
 
 '''
 hyperparameters for GA
@@ -29,7 +29,7 @@ select_rate = 0.5
 num_parents_mating = int(sol_per_pop * select_rate)
 # num_parents_mating = sol_per_pop
 
-cell_width = 77.0 * 2  # unit : m
+cell_width = rotor_radius * 4  # unit : m
 
 parent_selection_type = 'rws'
 keep_parents = 0
