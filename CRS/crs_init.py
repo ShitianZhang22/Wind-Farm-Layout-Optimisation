@@ -12,8 +12,9 @@ class CRSConvertor:
     This is a class for converting the CRS. Upon instantiation, a CRS will be found for the wind farm site.
     Besides, the geographical coordinates of all cell centres will be calculated in advance.
     `bounds`: a list of site range (geographical coordinate of Northern, Western, Southern, Eastern bounds (by order))
+    `cell_size`: an integer of the cell size
     """
-    def __init__(self, bounds):
+    def __init__(self, bounds, cell_size):
         aoi = AreaOfInterest(bounds[1], bounds[2], bounds[3], bounds[0])
         utm_crs_list = query_utm_crs_info(datum_name='WGS 84', area_of_interest=aoi)
         gcs = "EPSG:4326"  # WGS 84 (Geographic Coordinate System)
@@ -29,7 +30,6 @@ class CRSConvertor:
             corner2 = list(self.to_pcs(bounds[0], bounds[3]))
 
             # calculate the number of rows and columns
-            cell_size = 154
             self.rows = int((corner2[0] - corner1[0]) // cell_size)
             self.cols = int((corner2[1] - corner1[1]) // cell_size)
 

@@ -20,7 +20,7 @@ def land(source, _loc, site=None):
     """
 
     if site in CASE.keys(): 
-            return CASE[site]
+        return CASE[site]
     
     with netCDF4.Dataset(source, 'r') as file:
 

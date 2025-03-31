@@ -16,22 +16,22 @@ theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi
 hub_height = 80.0  # unit (m)
 surface_roughness = 0.25 * 0.001
 entrainment_const = 0.5 / np.log(hub_height / surface_roughness)
-rotor_radius = 77.0 / 2
+rotor_radius = 93.0 / 2
 
 '''
 hyperparameters for GA
 '''
 
-num_generations = 1000
+num_generations = 10000
 
 sol_per_pop = 3
 num_parents_mating = sol_per_pop - 1
 
-cell_width = 77.0 * 2  # unit : m
+cell_width = rotor_radius * 4  # unit : m
 
 parent_selection_type = 'sss'
-# keep_parents = -1
-keep_parents = 0
+keep_parents = -1
+# keep_parents = 0
 
 keep_elitism = 0
 
@@ -54,8 +54,8 @@ save_solutions = True
 parallel_processing = None
 # parallel_processing = ['process', 10]
 
-random_seed = None
-# random_seed = 0
+# random_seed = None
+random_seed = 0
 
 '''
 data folder
