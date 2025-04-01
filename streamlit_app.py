@@ -8,6 +8,7 @@ from streamlit_folium import st_folium
 import numpy as np
 
 from Optimiser.main import optimisation
+from Optimiser.config_ss import cell_width
 from CRS.crs_init import CRSConvertor
 from Wind.main import wind
 from Land.main import land, feasibility
@@ -133,10 +134,11 @@ if submit:
         wind_data = st.session_state['history']['wind']
         feasible_cell = st.session_state['history']['feasible_cell']
     else:
-        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]])
-        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-05df.nc')
+        conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]], cell_width)
+        wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-01d.nc')
         if st.session_state['case'] == 'Whitelee Wind Farm':
             feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
+            # feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
         else:
             feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
     solution, summary, efficiency, st.session_state['wt_summary'] = optimisation(st.session_state['wt_number'], conv.rows, conv.cols, wind_data, feasible_cell)
