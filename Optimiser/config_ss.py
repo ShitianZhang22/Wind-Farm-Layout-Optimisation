@@ -22,7 +22,9 @@ rotor_radius = 77.0 / 2
 hyperparameters for GA
 '''
 
-num_generations = 10000
+# num_generations = 10000
+num_generations = 500
+
 
 sol_per_pop = 3
 num_parents_mating = sol_per_pop - 1
