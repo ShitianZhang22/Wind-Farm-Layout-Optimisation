@@ -136,8 +136,8 @@ if submit:
     else:
         conv = CRSConvertor([site[1][0], site[0][1], site[0][0], site[1][1]], cell_width)
         wind_data = wind([site[1][0], site[0][1], site[0][0], site[1][1]], 'Wind/data/summary-01d.nc')
-        if st.session_state['case'] == 'Whitelee Wind Farm':
-            feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs, st.session_state['case'])
+        if st.session_state['case'] == 'Whitelee Wind Farm':  # this is for storing the infeasible area for Whitelee Wind Farm
+            feasible_cell = land('Land/d/ata/infeasible.nc', conv.grid_gcs, st.session_state['case'])
             # feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
         else:
             feasible_cell = land('Land/data/infeasible.nc', conv.grid_gcs)
