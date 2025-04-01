@@ -8,8 +8,8 @@ config.py
 """
 
 import pygad
-from Optimiser.config import *
-# from Optimiser.config_ss import *  # This is the version for steady-state selection
+# from Optimiser.config import *
+from Optimiser.config_ss import *  # This is the version for steady-state selection
 # from Optimiser.fitness_pre import fitness_func
 import time
 # import cProfile
@@ -178,8 +178,8 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     The power prediction is not correct at the moment.
     Unit: MWh
     '''
-    # wt_summary *= 24 * 365 * 0.3 / 1000
-    wt_summary *= 24 * 365 * 56 / 1000
+    wt_summary *= 24 * 365 * 0.3 / 1000
+    # wt_summary *= 24 * 365 * 56 / 1000
     # print(wt_summary.sum(), efficiency, wt_summary, wt_efficiency)
 
     # wt = pd.DataFrame({

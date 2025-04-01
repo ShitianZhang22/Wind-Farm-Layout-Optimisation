@@ -10,9 +10,10 @@ Return: an (8, 2) ndarray of the average wind speed and frequency at 8 direction
 
 import netCDF4
 import numpy as np
+from Wind.case import CASE
 
 
-def wind(area, save_dir):
+def wind(area, save_dir,site=None):
     """
     This is the master structure managing the process of wind data.
 
@@ -20,6 +21,9 @@ def wind(area, save_dir):
     `save_dir`: the directory to temporarily save the downloaded data.
     Return: an (8, 2) ndarray of the average wind speed and frequency at 8 directions
     """
+    if site in CASE.keys(): 
+        return CASE[site]
+    
     # get the centre of the site
     lat, lon = (area[0] + area[2]) / 2, (area[1] + area[3]) / 2
     # print(lat, lon)

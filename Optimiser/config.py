@@ -15,7 +15,7 @@ theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi
 hub_height = 80.0  # unit (m)
 surface_roughness = 0.25 * 0.001
 entrainment_const = 0.5 / np.log(hub_height / surface_roughness)
-rotor_radius = 93.0 / 2
+rotor_radius = 77.0 / 2
 
 '''
 hyperparameters for GA

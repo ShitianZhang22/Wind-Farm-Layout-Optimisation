@@ -42,7 +42,7 @@ def land(source, _loc, site=None):
             if fea[iy_min, ix_min]:
                 gene_space.append(i)
         
-        # print(gene_space)
+        print(gene_space)
 
         return gene_space
     

@@ -16,13 +16,15 @@ theta = np.array([0, np.pi / 4.0, np.pi / 2.0, 3 * np.pi / 4.0, np.pi, 5 * np.pi
 hub_height = 80.0  # unit (m)
 surface_roughness = 0.25 * 0.001
 entrainment_const = 0.5 / np.log(hub_height / surface_roughness)
-rotor_radius = 93.0 / 2
+rotor_radius = 77.0 / 2
 
 '''
 hyperparameters for GA
 '''
 
-num_generations = 10000
+# num_generations = 10000
+num_generations = 500
+
 
 sol_per_pop = 3
 num_parents_mating = sol_per_pop - 1
@@ -42,8 +44,8 @@ mutation_type = 'random'
 mutation_probability = 0.01  # this is the mutation rate but applies to gene
 mutation_by_replacement = True
 
-stop_criteria = None
-# stop_criteria = 'saturate_200'
+# stop_criteria = None
+stop_criteria = 'saturate_100'
 
 '''
 processing
@@ -54,8 +56,8 @@ save_solutions = True
 parallel_processing = None
 # parallel_processing = ['process', 10]
 
-# random_seed = None
-random_seed = 0
+random_seed = None
+# random_seed = 0
 
 '''
 data folder
