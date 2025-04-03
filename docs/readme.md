@@ -46,9 +46,9 @@ The application can be accessed at https://wind-farm-layout-optimisation.streaml
 
 The results include wind turbine placement and the performance of both the wind farm as a whole and individual turbines (**Figure 2**). Wind farm performance is assessed using AEP and energy production efficiency ($\eta$), which quantifies the energy transfer ratio under wake effects (Ju and Liu, 2019):
 
-$\eta=\frac{AEP}{{AEP}_0}\times100\%$
+$\eta=\frac{AEP}{AEP_0}\times100\%$
 	
-Here, $\eta$ represents the energy production efficiency, and ${AEP}_0$ denotes the theoretical maximum energy production without considering wake effects between turbines.
+Here, $\eta$ represents the energy production efficiency, and $AEP_0$ denotes the theoretical maximum energy production without considering wake effects between turbines.
 
 ![](https://github.com/ShitianZhang22/Wind-Farm-Layout-Optimisation/blob/main/docs/fig2.png?raw=true "Application Framework")
 
