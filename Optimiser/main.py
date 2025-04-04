@@ -174,12 +174,16 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     else:
         wt_efficiency = np.zeros((num_genes,), dtype='float64')
     efficiency = wt_efficiency.mean()
+    print(f'fitness: {wt_summary.sum()}, efficiency: {efficiency}')
+
     '''
-    The power prediction is not correct at the moment.
+    The power prediction is not accurate at the moment.
     Unit: MWh
     '''
     wt_summary *= 24 * 365 * 0.3 / 1000
     # wt_summary *= 24 * 365 * 56 / 1000
+
+    household = wt_summary.sum() / 2.7
     # print(wt_summary.sum(), efficiency, wt_summary, wt_efficiency)
 
     # wt = pd.DataFrame({
@@ -188,6 +192,7 @@ def optimisation(wt_number, rows, cols, wind_data, feasible_loc=None):
     #     })
 
     wt = np.array([wt_summary, wt_efficiency], dtype='float64').T
+    print(f'power: {wt_summary.sum()}, household: {household}')
     
     # print(wt)
     

@@ -6,3 +6,7 @@
 ## Optimisation algorithm
 1. The current algorithm can be optimised by pre-computation.
 2. Other algorithms can be tried.
+
+## Future direction
+1. Support user defined area
+2. Support locally uploaded GeoJson file.
