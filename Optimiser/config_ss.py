@@ -23,7 +23,7 @@ hyperparameters for GA
 '''
 
 # num_generations = 10000
-num_generations = 500
+num_generations = 50
 
 
 sol_per_pop = 3
