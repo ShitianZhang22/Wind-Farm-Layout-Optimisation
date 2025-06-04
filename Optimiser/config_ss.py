@@ -23,8 +23,7 @@ hyperparameters for GA
 '''
 
 # num_generations = 10000
-num_generations = 20
-
+num_generations = 5
 
 sol_per_pop = 3
 num_parents_mating = sol_per_pop - 1
