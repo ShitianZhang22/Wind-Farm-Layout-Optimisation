@@ -5,6 +5,7 @@ pygad
 netCDF4
 pandas
 pyproj
+altair==4.0
 -e ./Optimiser/
 -e ./Wind/
 -e ./Land/
